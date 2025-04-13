@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using POS_API.Model;
 using System.Numerics;
 
 namespace POS_API.Data
@@ -7,8 +8,8 @@ namespace POS_API.Data
     {
         public PosDbContext(DbContextOptions<PosDbContext> options) : base(options) { }
 
-        //public DbSet<Doctor> Doctors { get; set; }
-        //public DbSet<Patient> Patients { get; set; }
+        public DbSet<Categories> Categories { get; set; }
+        public DbSet<Users> Users { get; set; }
         //public DbSet<Appointment> Appointments { get; set; }
         //public DbSet<MedicalRecord> MedicalRecords { get; set; }
         //public DbSet<Prescription> Prescriptions { get; set; }
