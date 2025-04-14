@@ -1,4 +1,6 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace POS_API.Models
 {
@@ -25,5 +27,8 @@ namespace POS_API.Models
         public float Discount { get; set; }
 
         public int SalesDetailsId { get; set; }
+
+        [ValidateNever]
+        public SalesDetails SalesDetails { get; set; }
     }
 }

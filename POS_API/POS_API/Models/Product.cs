@@ -1,4 +1,7 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Text.Json.Serialization;
 
 namespace POS_API.Models
 {
@@ -31,8 +34,14 @@ namespace POS_API.Models
 
         [Required]
         public int CategoryId { get; set; }
+        [ForeignKey("CategoryId")]
+        [ValidateNever]
+        public Categories Category { get; set; }
 
         [Required]
         public int SupplierId { get; set; }
+        [ForeignKey("SupplierId")]
+        [ValidateNever]
+        public Supplier Supplier { get; set; }
     }
 }
