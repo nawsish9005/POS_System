@@ -10,13 +10,12 @@ namespace POS_API.Models
         public int Id { get; set; }
 
         [Range(0, 1)]
-        public int IsLoggedOut { get; set; }
+        public bool IsLoggedOut { get; set; }
 
         [Required]
-        public string TokenName { get; set; }
+        public string TokenValue { get; set; }
 
-        public int UserId { get; set; }
-        [ForeignKey("UserId")]
+        public long UserId { get; set; }
         [ValidateNever]
         public Users Users { get; set; }
     }

@@ -16,6 +16,7 @@ namespace POS_API.Controllers
             _context = context;
         }
 
+        // GET: api/SalesProduct
         [HttpGet]
         public async Task<ActionResult<IEnumerable<SalesProduct>>> GetSalesProducts()
         {
@@ -25,49 +26,57 @@ namespace POS_API.Controllers
                 .ToListAsync();
         }
 
-        [HttpGet("{id}")]
-        public async Task<ActionResult<SalesProduct>> GetSalesProduct(int id)
+        // GET: api/SalesProduct/{salesId}/{productId}
+        [HttpGet("{salesId}/{productId}")]
+        public async Task<ActionResult<SalesProduct>> GetSalesProduct(int salesId, int productId)
         {
-            var item = await _context.SalesProducts
+            var salesProduct = await _context.SalesProducts
                 .Include(sp => sp.Sales)
                 .Include(sp => sp.Product)
-                .FirstOrDefaultAsync(sp => sp.Id == id);
+                .FirstOrDefaultAsync(sp => sp.SalesId == salesId && sp.ProductId == productId);
 
-            if (item == null)
+            if (salesProduct == null)
+            {
                 return NotFound();
+            }
 
-            return item;
+            return salesProduct;
         }
 
+        // POST: api/SalesProduct
         [HttpPost]
-        public async Task<ActionResult<SalesProduct>> CreateSalesProduct(SalesProduct salesProduct)
+        public async Task<ActionResult<SalesProduct>> PostSalesProduct(SalesProduct salesProduct)
         {
             _context.SalesProducts.Add(salesProduct);
             await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetSalesProduct), new { id = salesProduct.Id }, salesProduct);
+
+            return CreatedAtAction(nameof(GetSalesProduct),
+                new { salesId = salesProduct.SalesId, productId = salesProduct.ProductId },
+                salesProduct);
         }
 
-        [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateSalesProduct(int id, SalesProduct salesProduct)
+        // DELETE: api/SalesProduct/{salesId}/{productId}
+        [HttpDelete("{salesId}/{productId}")]
+        public async Task<IActionResult> DeleteSalesProduct(int salesId, int productId)
         {
-            if (id != salesProduct.Id)
-                return BadRequest();
+            var salesProduct = await _context.SalesProducts
+                .FirstOrDefaultAsync(sp => sp.SalesId == salesId && sp.ProductId == productId);
 
-            _context.Entry(salesProduct).State = EntityState.Modified;
-            await _context.SaveChangesAsync();
-            return NoContent();
-        }
-
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteSalesProduct(int id)
-        {
-            var item = await _context.SalesProducts.FindAsync(id);
-            if (item == null)
+            if (salesProduct == null)
+            {
                 return NotFound();
+            }
 
-            _context.SalesProducts.Remove(item);
+            _context.SalesProducts.Remove(salesProduct);
             await _context.SaveChangesAsync();
+
             return NoContent();
         }
+
+        private bool SalesProductExists(int salesId, int productId)
+        {
+            return _context.SalesProducts.Any(e => e.SalesId == salesId && e.ProductId == productId);
+        }
+
     }
 }

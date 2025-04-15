@@ -16,5 +16,6 @@ namespace POS_API.Models
 
         [EmailAddress]
         public string Email { get; set; }
+        public ICollection<Product> Products { get; set; }
     }
 }

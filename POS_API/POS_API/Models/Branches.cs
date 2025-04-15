@@ -11,5 +11,6 @@ namespace POS_API.Models
 
         [Required]
         public string Location { get; set; }
+        public ICollection<Product> Products { get; set; }
     }
 }

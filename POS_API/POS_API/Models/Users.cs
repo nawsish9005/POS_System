@@ -4,31 +4,35 @@ namespace POS_API.Models
 {
     public class Users
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
 
-        [Range(0, 1)]
-        public int Active { get; set; }
+        public bool Active { get; set; }
 
         public string Address { get; set; }
 
-        [Phone]
         public string Cell { get; set; }
 
-        [Required]
         public DateOnly DOB { get; set; }
 
-        [EmailAddress]
         public string Email { get; set; }
-
-        [Required]
-        public string FullName { get; set; }
 
         public string Gender { get; set; }
 
-        public string ImageUrl { get; set; }
+        public string Image { get; set; }
 
-        [Required]
-        [MinLength(6)]
+        public string Name { get; set; }
+
         public string Password { get; set; }
+
+        public UserRole Role { get; set; }
+
+        public ICollection<Token> Tokens { get; set; }
+    }
+
+    public enum UserRole
+    {
+        Admin,
+        Cashier,
+        Manager
     }
 }

@@ -11,24 +11,17 @@ namespace POS_API.Models
         [Required]
         public string CustomerName { get; set; }
 
-        [Required]
-        public string ProductName { get; set; }
-
-        [Range(1, int.MaxValue)]
-        public int Quantity { get; set; }
-
-        [Range(0.0, double.MaxValue)]
-        public decimal TotalPrice { get; set; }
-
-        [Required]
-        public DateTime SalesDate { get; set; }
-
-        [Range(0, 100)]
         public float Discount { get; set; }
 
-        public int SalesDetailsId { get; set; }
+        public int Quantity { get; set; }
 
-        [ValidateNever]
-        public SalesDetails SalesDetails { get; set; }
+        public DateOnly SalesDate { get; set; }
+
+        public decimal TotalPrice { get; set; }
+
+        public int CustomerId { get; set; }
+        public Customers Customers { get; set; }
+        public ICollection<SalesDetails> SalesDetails { get; set; }
+        public ICollection<SalesProduct> SalesProducts { get; set; }
     }
 }

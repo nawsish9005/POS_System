@@ -14,5 +14,6 @@ namespace POS_API.Models
 
         [Required, Phone]
         public string Cell { get; set; }
+        public ICollection<Sales> Sales { get; set; }
     }
 }

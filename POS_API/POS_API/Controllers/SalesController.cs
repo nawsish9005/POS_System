@@ -20,46 +20,52 @@ namespace POS_API.Controllers
         public async Task<ActionResult<IEnumerable<Sales>>> GetSales()
         {
             return await _context.Sales
+                .Include(s => s.Customers)
                 .Include(s => s.SalesDetails)
+                .Include(s => s.SalesProducts)
+                    .ThenInclude(sp => sp.Product)
                 .ToListAsync();
         }
 
         // GET: api/Sales/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Sales>> GetSales(int id)
+        public async Task<ActionResult<Sales>> GetSale(int id)
         {
-            var sales = await _context.Sales
+            var sale = await _context.Sales
+                .Include(s => s.Customers)
                 .Include(s => s.SalesDetails)
+                .Include(s => s.SalesProducts)
+                    .ThenInclude(sp => sp.Product)
                 .FirstOrDefaultAsync(s => s.Id == id);
 
-            if (sales == null)
+            if (sale == null)
             {
                 return NotFound();
             }
 
-            return sales;
+            return sale;
         }
 
         // POST: api/Sales
         [HttpPost]
-        public async Task<ActionResult<Sales>> PostSales(Sales sales)
+        public async Task<ActionResult<Sales>> PostSale(Sales sale)
         {
-            _context.Sales.Add(sales);
+            _context.Sales.Add(sale);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetSales), new { id = sales.Id }, sales);
+            return CreatedAtAction(nameof(GetSale), new { id = sale.Id }, sale);
         }
 
         // PUT: api/Sales/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSales(int id, Sales sales)
+        public async Task<IActionResult> PutSale(int id, Sales sale)
         {
-            if (id != sales.Id)
+            if (id != sale.Id)
             {
                 return BadRequest();
             }
 
-            _context.Entry(sales).State = EntityState.Modified;
+            _context.Entry(sale).State = EntityState.Modified;
 
             try
             {
@@ -67,7 +73,7 @@ namespace POS_API.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!SalesExists(id))
+                if (!SaleExists(id))
                 {
                     return NotFound();
                 }
@@ -82,21 +88,21 @@ namespace POS_API.Controllers
 
         // DELETE: api/Sales/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteSales(int id)
+        public async Task<IActionResult> DeleteSale(int id)
         {
-            var sales = await _context.Sales.FindAsync(id);
-            if (sales == null)
+            var sale = await _context.Sales.FindAsync(id);
+            if (sale == null)
             {
                 return NotFound();
             }
 
-            _context.Sales.Remove(sales);
+            _context.Sales.Remove(sale);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool SalesExists(int id)
+        private bool SaleExists(int id)
         {
             return _context.Sales.Any(e => e.Id == id);
         }
