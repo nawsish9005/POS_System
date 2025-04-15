@@ -1,7 +1,12 @@
 {
   "Version": 1,
   "WorkspaceRootPath": "E:\\filessss\\POS_System\\POS_API\\",
-  "Documents": [],
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{5CDC936F-65E1-4A03-A2CD-B2471C2770AF}|POS_API\\POS_API.csproj|e:\\filessss\\pos_system\\pos_api\\pos_api\\controllers\\productcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{5CDC936F-65E1-4A03-A2CD-B2471C2770AF}|POS_API\\POS_API.csproj|solutionrelative:pos_api\\controllers\\productcontroller.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
   "DocumentGroupContainers": [
     {
       "Orientation": 0,
@@ -9,7 +14,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 200,
-          "SelectedChildIndex": -1,
+          "SelectedChildIndex": 2,
           "Children": [
             {
               "$type": "Bookmark",
@@ -18,6 +23,19 @@
             {
               "$type": "Bookmark",
               "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "ProductController.cs",
+              "DocumentMoniker": "E:\\filessss\\POS_System\\POS_API\\POS_API\\Controllers\\ProductController.cs",
+              "RelativeDocumentMoniker": "POS_API\\Controllers\\ProductController.cs",
+              "ToolTip": "E:\\filessss\\POS_System\\POS_API\\POS_API\\Controllers\\ProductController.cs",
+              "RelativeToolTip": "POS_API\\Controllers\\ProductController.cs",
+              "ViewState": "AQIAAA0AAAAAAAAAAIA8wBcAAAARAAAA",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2025-04-15T01:45:22.613Z",
+              "EditorCaption": ""
             }
           ]
         }

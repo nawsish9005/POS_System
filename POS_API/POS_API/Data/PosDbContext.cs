@@ -19,63 +19,79 @@ namespace POS_API.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<Token> Tokens { get; set; }
 
+
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            // Prevent circular cascade delete between Sales and SalesDetails
-            modelBuilder.Entity<Sales>()
-                .HasOne(s => s.SalesDetails)
-                .WithOne(sd => sd.Sales)
-                .HasForeignKey<Sales>(s => s.SalesDetailsId)
+            // One-to-One: Sales <-> SalesDetails
+            modelBuilder.Entity<SalesDetails>()
+                .HasOne(sd => sd.Sales)
+                .WithMany(s => s.SalesDetails)
+                .HasForeignKey(sd => sd.SalesId)
                 .OnDelete(DeleteBehavior.Restrict);
+
 
             modelBuilder.Entity<SalesDetails>()
                 .HasOne(sd => sd.Sales)
-                .WithOne(s => s.SalesDetails)
-                .HasForeignKey<SalesDetails>(sd => sd.SalesId)
+                .WithMany(s => s.SalesDetails)
+                .HasForeignKey(sd => sd.SalesId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Product -> Category (many-to-one)
+
+            // Many-to-One: Product -> Category
             modelBuilder.Entity<Product>()
-                .HasOne(p => p.Category)
-                .WithMany()
+                .HasOne(p => p.Categories)
+                .WithMany(c => c.Products)
                 .HasForeignKey(p => p.CategoryId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Product -> Supplier (many-to-one)
+            // Many-to-One: Product -> Supplier
             modelBuilder.Entity<Product>()
                 .HasOne(p => p.Supplier)
-                .WithMany()
+                .WithMany(s => s.Products)
                 .HasForeignKey(p => p.SupplierId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // SalesDetails -> Product (many-to-one)
+            // Many-to-One: Product -> Branch
+            modelBuilder.Entity<Product>()
+                .HasOne(p => p.Branches)
+                .WithMany(b => b.Products)
+                .HasForeignKey(p => p.BranchId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // Many-to-One: SalesDetails -> Product
             modelBuilder.Entity<SalesDetails>()
                 .HasOne(sd => sd.Product)
-                .WithMany()
+                .WithMany(p => p.SalesDetails)
                 .HasForeignKey(sd => sd.ProductId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // SalesProduct -> Product (many-to-one)
+            // Many-to-One: SalesProduct -> Product
             modelBuilder.Entity<SalesProduct>()
                 .HasOne(sp => sp.Product)
-                .WithMany()
+                .WithMany(p => p.SalesProducts)
                 .HasForeignKey(sp => sp.ProductId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // SalesProduct -> Sales (many-to-one)
+            // Many-to-One: SalesProduct -> Sales
             modelBuilder.Entity<SalesProduct>()
                 .HasOne(sp => sp.Sales)
-                .WithMany()
+                .WithMany(s => s.SalesProducts)
                 .HasForeignKey(sp => sp.SalesId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // Token -> Users (many-to-one)
+            // Many-to-One: Token -> Users
             modelBuilder.Entity<Token>()
                 .HasOne(t => t.Users)
-                .WithMany()
+                .WithMany(u => u.Tokens)
                 .HasForeignKey(t => t.UserId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            // Composite Key: SalesProduct
+            modelBuilder.Entity<SalesProduct>()
+                .HasKey(sp => new { sp.SalesId, sp.ProductId });
         }
+
 
 
 

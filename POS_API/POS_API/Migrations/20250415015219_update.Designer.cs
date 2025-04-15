@@ -12,8 +12,8 @@ using POS_API.Data;
 namespace POS_API.Migrations
 {
     [DbContext(typeof(PosDbContext))]
-    [Migration("20250414051546_addmodeltodb")]
-    partial class addmodeltodb
+    [Migration("20250415015219_update")]
+    partial class update
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -63,6 +63,31 @@ namespace POS_API.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("POS_API.Models.Customers", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Cell")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Customers");
+                });
+
             modelBuilder.Entity("POS_API.Models.Product", b =>
                 {
                     b.Property<int>("Id")
@@ -77,10 +102,10 @@ namespace POS_API.Migrations
                     b.Property<int>("CategoryId")
                         .HasColumnType("int");
 
-                    b.Property<DateOnly>("Expiry_Date")
+                    b.Property<DateOnly>("ExpiryDate")
                         .HasColumnType("date");
 
-                    b.Property<DateOnly>("Manufacture_Date")
+                    b.Property<DateOnly>("ManufactureDate")
                         .HasColumnType("date");
 
                     b.Property<string>("Name")
@@ -88,7 +113,6 @@ namespace POS_API.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Photo")
-                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Quantity")
@@ -105,6 +129,8 @@ namespace POS_API.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("BranchId");
+
                     b.HasIndex("CategoryId");
 
                     b.HasIndex("SupplierId");
@@ -120,30 +146,31 @@ namespace POS_API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
                     b.Property<string>("CustomerName")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("CustomersId")
+                        .HasColumnType("int");
+
                     b.Property<float>("Discount")
                         .HasColumnType("real");
-
-                    b.Property<string>("ProductName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<DateTime>("SalesDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("SalesDetailsId")
-                        .HasColumnType("int");
+                    b.Property<DateOnly>("SalesDate")
+                        .HasColumnType("date");
 
                     b.Property<decimal>("TotalPrice")
                         .HasColumnType("decimal(18,2)");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("CustomersId");
 
                     b.ToTable("Sales");
                 });
@@ -178,31 +205,22 @@ namespace POS_API.Migrations
 
                     b.HasIndex("ProductId");
 
-                    b.HasIndex("SalesId")
-                        .IsUnique();
+                    b.HasIndex("SalesId");
 
                     b.ToTable("SalesDetails");
                 });
 
             modelBuilder.Entity("POS_API.Models.SalesProduct", b =>
                 {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
+                    b.Property<int>("SalesId")
                         .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
                     b.Property<int>("ProductId")
                         .HasColumnType("int");
 
-                    b.Property<int>("SalesId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
+                    b.HasKey("SalesId", "ProductId");
 
                     b.HasIndex("ProductId");
-
-                    b.HasIndex("SalesId");
 
                     b.ToTable("SalesProducts");
                 });
@@ -244,15 +262,15 @@ namespace POS_API.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("IsLoggedOut")
-                        .HasColumnType("int");
+                    b.Property<bool>("IsLoggedOut")
+                        .HasColumnType("bit");
 
-                    b.Property<string>("TokenName")
+                    b.Property<string>("TokenValue")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
 
                     b.HasKey("Id");
 
@@ -263,14 +281,14 @@ namespace POS_API.Migrations
 
             modelBuilder.Entity("POS_API.Models.Users", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<long>("Id")
                         .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
+                        .HasColumnType("bigint");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<int>("Active")
-                        .HasColumnType("int");
+                    b.Property<bool>("Active")
+                        .HasColumnType("bit");
 
                     b.Property<string>("Address")
                         .IsRequired()
@@ -287,21 +305,24 @@ namespace POS_API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("FullName")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Gender")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("ImageUrl")
+                    b.Property<string>("Image")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Password")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Role")
+                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -310,34 +331,53 @@ namespace POS_API.Migrations
 
             modelBuilder.Entity("POS_API.Models.Product", b =>
                 {
-                    b.HasOne("POS_API.Models.Categories", "Category")
-                        .WithMany()
+                    b.HasOne("POS_API.Models.Branches", "Branches")
+                        .WithMany("Products")
+                        .HasForeignKey("BranchId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("POS_API.Models.Categories", "Categories")
+                        .WithMany("Products")
                         .HasForeignKey("CategoryId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("POS_API.Models.Supplier", "Supplier")
-                        .WithMany()
+                        .WithMany("Products")
                         .HasForeignKey("SupplierId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Category");
+                    b.Navigation("Branches");
+
+                    b.Navigation("Categories");
 
                     b.Navigation("Supplier");
+                });
+
+            modelBuilder.Entity("POS_API.Models.Sales", b =>
+                {
+                    b.HasOne("POS_API.Models.Customers", "Customers")
+                        .WithMany("Sales")
+                        .HasForeignKey("CustomersId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Customers");
                 });
 
             modelBuilder.Entity("POS_API.Models.SalesDetails", b =>
                 {
                     b.HasOne("POS_API.Models.Product", "Product")
-                        .WithMany()
+                        .WithMany("SalesDetails")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("POS_API.Models.Sales", "Sales")
-                        .WithOne("SalesDetails")
-                        .HasForeignKey("POS_API.Models.SalesDetails", "SalesId")
+                        .WithMany("SalesDetails")
+                        .HasForeignKey("SalesId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
@@ -349,13 +389,13 @@ namespace POS_API.Migrations
             modelBuilder.Entity("POS_API.Models.SalesProduct", b =>
                 {
                     b.HasOne("POS_API.Models.Product", "Product")
-                        .WithMany()
+                        .WithMany("SalesProducts")
                         .HasForeignKey("ProductId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("POS_API.Models.Sales", "Sales")
-                        .WithMany()
+                        .WithMany("SalesProducts")
                         .HasForeignKey("SalesId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -368,7 +408,7 @@ namespace POS_API.Migrations
             modelBuilder.Entity("POS_API.Models.Token", b =>
                 {
                     b.HasOne("POS_API.Models.Users", "Users")
-                        .WithMany()
+                        .WithMany("Tokens")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -376,10 +416,43 @@ namespace POS_API.Migrations
                     b.Navigation("Users");
                 });
 
+            modelBuilder.Entity("POS_API.Models.Branches", b =>
+                {
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("POS_API.Models.Categories", b =>
+                {
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("POS_API.Models.Customers", b =>
+                {
+                    b.Navigation("Sales");
+                });
+
+            modelBuilder.Entity("POS_API.Models.Product", b =>
+                {
+                    b.Navigation("SalesDetails");
+
+                    b.Navigation("SalesProducts");
+                });
+
             modelBuilder.Entity("POS_API.Models.Sales", b =>
                 {
-                    b.Navigation("SalesDetails")
-                        .IsRequired();
+                    b.Navigation("SalesDetails");
+
+                    b.Navigation("SalesProducts");
+                });
+
+            modelBuilder.Entity("POS_API.Models.Supplier", b =>
+                {
+                    b.Navigation("Products");
+                });
+
+            modelBuilder.Entity("POS_API.Models.Users", b =>
+                {
+                    b.Navigation("Tokens");
                 });
 #pragma warning restore 612, 618
         }
