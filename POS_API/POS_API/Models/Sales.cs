@@ -15,7 +15,7 @@ namespace POS_API.Models
 
         public int Quantity { get; set; }
 
-        public DateOnly SalesDate { get; set; }
+        public DateTime SalesDate { get; set; }
 
         public decimal TotalPrice { get; set; }
 

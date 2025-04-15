@@ -10,10 +10,10 @@ namespace POS_API.Models
         public int Id { get; set; }
 
         [Required]
-        public DateOnly ExpiryDate { get; set; }
+        public DateTime ExpiryDate { get; set; }
 
         [Required]
-        public DateOnly ManufactureDate { get; set; }
+        public DateTime ManufactureDate { get; set; }
 
         [Required]
         public string Name { get; set; }
