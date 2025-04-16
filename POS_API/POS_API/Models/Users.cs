@@ -29,10 +29,10 @@ namespace POS_API.Models
         public ICollection<Token> Tokens { get; set; }
     }
 
-    public enum UserRole
-    {
-        Admin,
-        Cashier,
-        Manager
-    }
+    //public enum UserRole
+    //{
+    //    Admin,
+    //    Cashier,
+    //    Manager
+    //}
 }

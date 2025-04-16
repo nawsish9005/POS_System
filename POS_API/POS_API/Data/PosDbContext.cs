@@ -1,11 +1,13 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 using POS_API.Models;
 using POS_API.Models;
 using System.Numerics;
 
 namespace POS_API.Data
 {
-    public class PosDbContext: DbContext
+    public class PosDbContext: IdentityDbContext<IdentityUser>
     {
         public PosDbContext(DbContextOptions<PosDbContext> options) : base(options) { }
 
