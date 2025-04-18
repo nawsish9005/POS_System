@@ -20,11 +20,9 @@ namespace POS_API.Models
 
         public string? Photo { get; set; }
 
-        public int Quantity { get; set; }
+        public int StockQuantity { get; set; }
 
-        public int Stock { get; set; }
-
-        public int UnitPrice { get; set; }
+        public decimal Price { get; set; }
 
         public int BranchId { get; set; }
         public Branches Branches { get; set; }
@@ -34,7 +32,7 @@ namespace POS_API.Models
 
         public int SupplierId { get; set; }
         public Supplier Supplier { get; set; }
-        public ICollection<Payment> SalesDetails { get; set; }
-        public ICollection<SaleItem> SalesProducts { get; set; }
+        public ICollection<SaleItem> SaleItems { get; set; }
+        public ICollection<PurchaseItem> PurchaseItems { get; set; }
     }
 }
