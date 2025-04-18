@@ -30,11 +30,11 @@ namespace POS_API.Models
         public Branches Branches { get; set; }
 
         public int CategoryId { get; set; }
-        public Categories Categories { get; set; }
+        public Category Categories { get; set; }
 
         public int SupplierId { get; set; }
         public Supplier Supplier { get; set; }
-        public ICollection<SalesDetails> SalesDetails { get; set; }
-        public ICollection<SalesProduct> SalesProducts { get; set; }
+        public ICollection<Payment> SalesDetails { get; set; }
+        public ICollection<SaleItem> SalesProducts { get; set; }
     }
 }

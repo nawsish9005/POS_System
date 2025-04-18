@@ -1,5 +1,8 @@
-﻿namespace POS_API.Models
+﻿using Microsoft.EntityFrameworkCore;
+
+namespace POS_API.Models
 {
+    [Keyless]
     public class Registration
     {
         public string UserName { get; set; } = string.Empty;

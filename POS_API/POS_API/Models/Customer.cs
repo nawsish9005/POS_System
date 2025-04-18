@@ -2,13 +2,19 @@
 
 namespace POS_API.Models
 {
-    public class Supplier
+    public class Customer
     {
         public int Id { get; set; }
-        public string CompanyName { get; set; }
-        public string ContactName { get; set; }
-        public string Phone { get; set; }
-        public string Email { get; set; }
+
+        [Required]
+        public string FullName { get; set; }
+
+        [Required]
         public string Address { get; set; }
+
+        [Required, Phone]
+        public string Phone { get; set; }
+        [Required]
+        public string Email { get; set; }
     }
 }
