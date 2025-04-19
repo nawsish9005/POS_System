@@ -58,7 +58,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+app.UseStaticFiles(); // Serves files from wwwroot
 app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();

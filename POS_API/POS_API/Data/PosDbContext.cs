@@ -17,6 +17,8 @@ namespace POS_API.Data
         public DbSet<Supplier> Suppliers { get; set; }
         public DbSet<Purchase> Purchases { get; set; }
         public DbSet<PurchaseItem> PurchaseItems { get; set; }
+        public DbSet<Branches> Branches { get; set; }
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -75,6 +77,12 @@ namespace POS_API.Data
                 .WithMany(c => c.Sales)
                 .HasForeignKey(s => s.CustomerId)
                 .OnDelete(DeleteBehavior.SetNull);
+
+            modelBuilder.Entity<Product>()
+            .HasOne(p => p.Branches)
+            .WithMany(b => b.Products)
+            .HasForeignKey(p => p.BranchId)
+            .OnDelete(DeleteBehavior.Cascade); // or Restrict, if you want
         }
     }
 }

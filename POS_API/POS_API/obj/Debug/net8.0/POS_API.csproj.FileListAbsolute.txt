@@ -149,3 +149,4 @@ E:\filessss\POS_System\POS_API\POS_API\obj\Debug\net8.0\refint\POS_API.dll
 E:\filessss\POS_System\POS_API\POS_API\obj\Debug\net8.0\POS_API.pdb
 E:\filessss\POS_System\POS_API\POS_API\obj\Debug\net8.0\POS_API.genruntimeconfig.cache
 E:\filessss\POS_System\POS_API\POS_API\obj\Debug\net8.0\ref\POS_API.dll
+E:\filessss\POS_System\POS_API\POS_API\bin\Debug\net8.0\POS_API.staticwebassets.runtime.json

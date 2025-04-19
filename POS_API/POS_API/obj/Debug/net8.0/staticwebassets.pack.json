@@ -1,0 +1,29 @@
+{
+  "Files": [
+    {
+      "Id": "E:\\filessss\\POS_System\\POS_API\\POS_API\\wwwroot\\images\\af12ee4d-2c25-4d59-90d2-c9724f0735e1.png",
+      "PackagePath": "staticwebassets\\images\\af12ee4d-2c25-4d59-90d2-c9724f0735e1.png"
+    },
+    {
+      "Id": "E:\\filessss\\POS_System\\POS_API\\POS_API\\wwwroot\\images\\ca16ea9e-2ac5-4524-8073-dcb46be51504.png",
+      "PackagePath": "staticwebassets\\images\\ca16ea9e-2ac5-4524-8073-dcb46be51504.png"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.POS_API.Microsoft.AspNetCore.StaticWebAssets.props",
+      "PackagePath": "build\\Microsoft.AspNetCore.StaticWebAssets.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.build.POS_API.props",
+      "PackagePath": "build\\POS_API.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildMultiTargeting.POS_API.props",
+      "PackagePath": "buildMultiTargeting\\POS_API.props"
+    },
+    {
+      "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.buildTransitive.POS_API.props",
+      "PackagePath": "buildTransitive\\POS_API.props"
+    }
+  ],
+  "ElementsToRemove": []
+}
