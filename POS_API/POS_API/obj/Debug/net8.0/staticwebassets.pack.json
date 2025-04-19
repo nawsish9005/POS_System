@@ -1,12 +1,8 @@
 {
   "Files": [
     {
-      "Id": "E:\\filessss\\POS_System\\POS_API\\POS_API\\wwwroot\\images\\af12ee4d-2c25-4d59-90d2-c9724f0735e1.png",
-      "PackagePath": "staticwebassets\\images\\af12ee4d-2c25-4d59-90d2-c9724f0735e1.png"
-    },
-    {
-      "Id": "E:\\filessss\\POS_System\\POS_API\\POS_API\\wwwroot\\images\\ca16ea9e-2ac5-4524-8073-dcb46be51504.png",
-      "PackagePath": "staticwebassets\\images\\ca16ea9e-2ac5-4524-8073-dcb46be51504.png"
+      "Id": "E:\\filessss\\POS_System\\POS_API\\POS_API\\wwwroot\\images\\87b571ed-92ea-4ad0-a9e6-414320530bae.jpg",
+      "PackagePath": "staticwebassets\\images\\87b571ed-92ea-4ad0-a9e6-414320530bae.jpg"
     },
     {
       "Id": "obj\\Debug\\net8.0\\staticwebassets\\msbuild.POS_API.Microsoft.AspNetCore.StaticWebAssets.props",
