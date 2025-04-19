@@ -1,14 +1,17 @@
-﻿namespace POS_API.Models
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace POS_API.Dtos
 {
-    public class PurchaseItem
+    public class PurchaseItemDto
     {
         public int Id { get; set; }
+        [Required]
         public int PurchaseId { get; set; }
-        public Purchase Purchase { get; set; }
+        [Required]
         public int ProductId { get; set; }
-        public Product Product { get; set; }
         public int Quantity { get; set; }
         public decimal UnitCost { get; set; }
         public decimal Subtotal { get; set; }
+        //public decimal Subtotal => Quantity * UnitCost;
     }
 }

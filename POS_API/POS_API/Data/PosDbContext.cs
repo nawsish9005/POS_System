@@ -18,6 +18,10 @@ namespace POS_API.Data
         public DbSet<Purchase> Purchases { get; set; }
         public DbSet<PurchaseItem> PurchaseItems { get; set; }
         public DbSet<Branches> Branches { get; set; }
+        public DbSet<Discount> Discounts { get; set; }
+        public DbSet<LoyaltyPoint> LoyaltyPoints { get; set; }
+        public DbSet<Payment> Payments { get; set; }
+
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -82,7 +86,21 @@ namespace POS_API.Data
             .HasOne(p => p.Branches)
             .WithMany(b => b.Products)
             .HasForeignKey(p => p.BranchId)
-            .OnDelete(DeleteBehavior.Cascade); // or Restrict, if you want
+            .OnDelete(DeleteBehavior.Cascade);
+
+            // Payment: One Sale has many Payments
+            modelBuilder.Entity<Payment>()
+                .HasOne(p => p.Sale)
+                .WithMany(s => s.Payments)
+                .HasForeignKey(p => p.SaleId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            // LoyaltyPoint: One Customer has many LoyaltyPoints
+            modelBuilder.Entity<LoyaltyPoint>()
+                .HasOne<Customer>()
+                .WithMany()
+                .HasForeignKey(lp => lp.CustomerId)
+                .OnDelete(DeleteBehavior.Cascade);
         }
     }
 }

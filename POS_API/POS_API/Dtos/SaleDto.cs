@@ -14,5 +14,6 @@
         public string UserId { get; set; }
 
         public List<SaleItemDto> SaleItems { get; set; }
+        public List<PaymentDto> Payments { get; set; }
     }
 }

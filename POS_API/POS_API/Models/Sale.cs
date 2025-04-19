@@ -16,5 +16,6 @@ namespace POS_API.Models
         public string UserId { get; set; }
         public User User { get; set; }
         public ICollection<SaleItem> SaleItems { get; set; }
+        public List<Payment> Payments { get; set; }
     }
 }

@@ -23,26 +23,36 @@ namespace POS_API.Controllers
         {
             var sales = await _context.Sales
                 .Include(s => s.SaleItems)
-                .Select(s => new SaleDto
-                {
-                    Id = s.Id,
-                    SaleDate = s.SaleDate,
-                    CustomerId = s.CustomerId,
-                    TotalAmount = s.TotalAmount,
-                    PaidAmount = s.PaidAmount,
-                    ChangeAmount = s.ChangeAmount,
-                    UserId = s.UserId,
-                    SaleItems = s.SaleItems.Select(i => new SaleItemDto
-                    {
-                        Id = i.Id,
-                        ProductId = i.ProductId,
-                        Quantity = i.Quantity,
-                        UnitPrice = i.UnitPrice
-                    }).ToList()
-                })
+                .Include(s => s.Payments)
                 .ToListAsync();
 
-            return Ok(sales);
+            var result = sales.Select(sale => new SaleDto
+            {
+                Id = sale.Id,
+                SaleDate = sale.SaleDate,
+                CustomerId = sale.CustomerId,
+                TotalAmount = sale.TotalAmount,
+                PaidAmount = sale.PaidAmount,
+                ChangeAmount = sale.ChangeAmount,
+                UserId = sale.UserId,
+                SaleItems = sale.SaleItems.Select(item => new SaleItemDto
+                {
+                    Id = item.Id,
+                    SaleId = item.SaleId,
+                    ProductId = item.ProductId,
+                    Quantity = item.Quantity,
+                    UnitPrice = item.UnitPrice
+                }).ToList(),
+                Payments = sale.Payments.Select(p => new PaymentDto
+                {
+                    Id = p.Id,
+                    SaleId = p.SaleId,
+                    Amount = p.Amount,
+                    PaymentMethod = p.PaymentMethod
+                }).ToList()
+            });
+
+            return Ok(result);
         }
 
         [HttpGet("{id}")]
@@ -50,6 +60,7 @@ namespace POS_API.Controllers
         {
             var sale = await _context.Sales
                 .Include(s => s.SaleItems)
+                .Include(s => s.Payments)
                 .FirstOrDefaultAsync(s => s.Id == id);
 
             if (sale == null)
@@ -64,12 +75,20 @@ namespace POS_API.Controllers
                 PaidAmount = sale.PaidAmount,
                 ChangeAmount = sale.ChangeAmount,
                 UserId = sale.UserId,
-                SaleItems = sale.SaleItems.Select(i => new SaleItemDto
+                SaleItems = sale.SaleItems.Select(item => new SaleItemDto
                 {
-                    Id = i.Id,
-                    ProductId = i.ProductId,
-                    Quantity = i.Quantity,
-                    UnitPrice = i.UnitPrice
+                    Id = item.Id,
+                    SaleId = item.SaleId,
+                    ProductId = item.ProductId,
+                    Quantity = item.Quantity,
+                    UnitPrice = item.UnitPrice
+                }).ToList(),
+                Payments = sale.Payments.Select(p => new PaymentDto
+                {
+                    Id = p.Id,
+                    SaleId = p.SaleId,
+                    Amount = p.Amount,
+                    PaymentMethod = p.PaymentMethod
                 }).ToList()
             };
 
@@ -77,7 +96,7 @@ namespace POS_API.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(SaleDto dto)
+        public async Task<ActionResult> Create(SaleDto dto)
         {
             var sale = new Sale
             {
@@ -87,31 +106,36 @@ namespace POS_API.Controllers
                 PaidAmount = dto.PaidAmount,
                 ChangeAmount = dto.ChangeAmount,
                 UserId = dto.UserId,
-                SaleItems = dto.SaleItems.Select(i => new SaleItem
+                SaleItems = dto.SaleItems.Select(item => new SaleItem
                 {
-                    ProductId = i.ProductId,
-                    Quantity = i.Quantity,
-                    UnitPrice = i.UnitPrice
+                    ProductId = item.ProductId,
+                    Quantity = item.Quantity,
+                    UnitPrice = item.UnitPrice
+                }).ToList(),
+                Payments = dto.Payments.Select(p => new Payment
+                {
+                    Amount = p.Amount,
+                    PaymentMethod = p.PaymentMethod
                 }).ToList()
             };
 
             _context.Sales.Add(sale);
             await _context.SaveChangesAsync();
 
-            return Ok(new { Message = "Sale created successfully", sale.Id });
+            return Ok(new { sale.Id });
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, SaleDto dto)
+        public async Task<ActionResult> Update(int id, SaleDto dto)
         {
             var sale = await _context.Sales
                 .Include(s => s.SaleItems)
+                .Include(s => s.Payments)
                 .FirstOrDefaultAsync(s => s.Id == id);
 
             if (sale == null)
                 return NotFound();
 
-            // Update sale properties
             sale.SaleDate = dto.SaleDate;
             sale.CustomerId = dto.CustomerId;
             sale.TotalAmount = dto.TotalAmount;
@@ -119,36 +143,47 @@ namespace POS_API.Controllers
             sale.ChangeAmount = dto.ChangeAmount;
             sale.UserId = dto.UserId;
 
-            // Clear existing items and re-add
+            // Update SaleItems
             _context.SaleItems.RemoveRange(sale.SaleItems);
-
-            sale.SaleItems = dto.SaleItems.Select(i => new SaleItem
+            sale.SaleItems = dto.SaleItems.Select(item => new SaleItem
             {
-                ProductId = i.ProductId,
-                Quantity = i.Quantity,
-                UnitPrice = i.UnitPrice
+                SaleId = id,
+                ProductId = item.ProductId,
+                Quantity = item.Quantity,
+                UnitPrice = item.UnitPrice
+            }).ToList();
+
+            // Update Payments
+            _context.Payments.RemoveRange(sale.Payments);
+            sale.Payments = dto.Payments.Select(p => new Payment
+            {
+                SaleId = id,
+                Amount = p.Amount,
+                PaymentMethod = p.PaymentMethod
             }).ToList();
 
             await _context.SaveChangesAsync();
 
-            return Ok(new { Message = "Sale updated successfully" });
+            return NoContent();
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<ActionResult> Delete(int id)
         {
             var sale = await _context.Sales
                 .Include(s => s.SaleItems)
+                .Include(s => s.Payments)
                 .FirstOrDefaultAsync(s => s.Id == id);
 
             if (sale == null)
                 return NotFound();
 
             _context.SaleItems.RemoveRange(sale.SaleItems);
+            _context.Payments.RemoveRange(sale.Payments);
             _context.Sales.Remove(sale);
             await _context.SaveChangesAsync();
 
-            return Ok(new { Message = "Sale deleted successfully" });
+            return NoContent();
         }
     }
 }
