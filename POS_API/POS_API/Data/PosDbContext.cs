@@ -20,7 +20,7 @@ namespace POS_API.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);// 👈 REQUIRED for Identity
+            base.OnModelCreating(modelBuilder);
 
             // Category - Product
             modelBuilder.Entity<Product>()
@@ -41,7 +41,7 @@ namespace POS_API.Data
                 .HasOne(pi => pi.Purchase)
                 .WithMany(p => p.PurchaseItems)
                 .HasForeignKey(pi => pi.PurchaseId)
-                .OnDelete(DeleteBehavior.Restrict); // ✅ avoid cascade path error
+                .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<PurchaseItem>()
                 .HasOne(pi => pi.Product)
@@ -74,10 +74,7 @@ namespace POS_API.Data
                 .HasOne(s => s.Customer)
                 .WithMany(c => c.Sales)
                 .HasForeignKey(s => s.CustomerId)
-                .OnDelete(DeleteBehavior.SetNull); // ✅ allows optional customer
-
-            // Optional: Configure identity table names if needed
-            // modelBuilder.Entity<User>().ToTable("Users");
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }

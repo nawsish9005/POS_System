@@ -25,7 +25,12 @@ namespace POS_API.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] Registration registration)
         {
-            var user = new IdentityUser { UserName = registration.UserName };
+            var user = new IdentityUser 
+            { 
+                UserName = registration.UserName,
+                Email = registration.Email
+            };
+
             var result = await _userManager.CreateAsync(user, registration.Password);
             if (result.Succeeded)
             {
@@ -33,6 +38,7 @@ namespace POS_API.Controllers
             }
             return BadRequest(result.Errors);
         }
+
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] Login login)
         {
