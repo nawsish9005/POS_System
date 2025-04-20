@@ -21,6 +21,7 @@ namespace POS_API.Data
         public DbSet<Discount> Discounts { get; set; }
         public DbSet<LoyaltyPoint> LoyaltyPoints { get; set; }
         public DbSet<Payment> Payments { get; set; }
+        public DbSet<Tax> Taxes { get; set; }
 
 
 
