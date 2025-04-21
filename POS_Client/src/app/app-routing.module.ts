@@ -4,12 +4,23 @@ import { CategoryComponent } from './category/category.component';
 import { CustomerComponent } from './customer/customer.component';
 import { BranchesComponent } from './branches/branches.component';
 import { ProductComponent } from './product/product.component';
+import { LoginComponent } from './auth/login/login.component';
+import { RegistrationComponent } from './auth/registration/registration.component';
+import { AuthGuard } from './auth/auth.guard';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 const routes: Routes = [
-  {path: 'category',title:'Category' ,component: CategoryComponent},
-  {path: 'customer',title:'Customer' ,component: CustomerComponent},
-  {path: 'branches',title:'Branches' ,component: BranchesComponent},
-  {path: 'product',title:'Product' ,component: ProductComponent},
+  { path: 'login', title: 'Login', component: LoginComponent },
+  { path: 'register', title: 'Register', component: RegistrationComponent },
+  { path: 'dashboard', title: 'Dashboard', component: DashboardComponent },
+
+  { path: 'category', title: 'Category', component: CategoryComponent, canActivate: [AuthGuard] },
+  { path: 'customer', title: 'Customer', component: CustomerComponent, canActivate: [AuthGuard] },
+  { path: 'branches', title: 'Branches', component: BranchesComponent, canActivate: [AuthGuard] },
+  { path: 'product', title: 'Product', component: ProductComponent, canActivate: [AuthGuard] },
+
+  { path: '', redirectTo: '/login', pathMatch: 'full' },
+  { path: '**', redirectTo: '/login' }
 ];
 
 @NgModule({

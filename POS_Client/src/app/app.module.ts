@@ -9,8 +9,12 @@ import { CategoryComponent } from './category/category.component';
 import { BranchesComponent } from './branches/branches.component';
 import { CustomerComponent } from './customer/customer.component';
 import { ProductComponent } from './product/product.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
+import { LoginComponent } from './auth/login/login.component';
+import { RegistrationComponent } from './auth/registration/registration.component';
+import { JwtInterceptor } from './auth/jwt.interceptor';
+import { DashboardComponent } from './dashboard/dashboard.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +25,9 @@ import { ReactiveFormsModule } from '@angular/forms';
     BranchesComponent,
     CustomerComponent,
     ProductComponent,
+    LoginComponent,
+    RegistrationComponent,
+    DashboardComponent,
   ],
   imports: [
     HttpClientModule,
@@ -28,7 +35,9 @@ import { ReactiveFormsModule } from '@angular/forms';
     AppRoutingModule,
     ReactiveFormsModule,
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
