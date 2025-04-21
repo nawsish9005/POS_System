@@ -1,74 +1,76 @@
 <!-- Content -->
 <div class="content">
-    <div class="card w-75 mx-auto">
-  <div class="card-header">
-    <h5 class="mb-0">Category Inputs</h5>
-  </div>
-  <div class="card-body">
-    <form>
-      <!-- First Row: Two Inputs Side by Side -->
-      <div class="row mb-3 align-items-end">
-        <div class="col-md-8">
+  <!-- Category Input Form -->
+  <div class="card w-75 mx-auto mb-4">
+    <div class="card-header">
+      <h5 class="mb-0">{{ isEditMode ? 'Update Category' : 'Add Category' }}</h5>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="categoryForm" (ngSubmit)="onSubmit()">
+        <div class="mb-3">
           <label class="form-label">Category Name</label>
-          <input type="text" class="form-control" placeholder="category">
+          <input
+            type="text"
+            class="form-control"
+            formControlName="categoryName"
+            placeholder="Enter category name"
+            required
+          />
+          <div
+            class="text-danger"
+            *ngIf="categoryForm.controls['categoryName'].touched && categoryForm.controls['categoryName'].invalid"
+          >
+            Category name is required.
+          </div>
         </div>
-        <div class="col-md-4">
-          <button type="submit" class="btn btn-primary mt-2 w-20">Add</button>
-        </div>
-      </div>
-      
-    </form>
-  </div>
-</div>
 
-  </div>
-  <div class="content">
-    <div class="card table-card">
-      <div class="card-header">
-        <h5 class="mb-0">User List</h5>
-      </div>
-      <div class="card-body table-responsive">
-        <table class="table table-bordered table-striped">
-          <thead class="table-light">
-            <tr>
-              <th>#</th>
-              <th>Name</th>
-              <th>Email</th>
-              <th>Role</th>
-              <th>Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <td>1</td>
-              <td>Alice Khan</td>
-              <td>aliceexample.com</td>
-              <td>Admin</td>
-              <td><span class="badge bg-success">Active</span></td>
-            </tr>
-            <tr>
-              <td>2</td>
-              <td>Rahim Uddin</td>
-              <td>rahimexample.com</td>
-              <td>Editor</td>
-              <td><span class="badge bg-warning text-dark">Pending</span></td>
-            </tr>
-            <tr>
-              <td>3</td>
-              <td>Sarah Mia</td>
-              <td>sarahexample.com</td>
-              <td>Viewer</td>
-              <td><span class="badge bg-danger">Inactive</span></td>
-            </tr>
-            <tr>
-              <td>4</td>
-              <td>Tanvir Alam</td>
-              <td>tanvirexample.com</td>
-              <td>Admin</td>
-              <td><span class="badge bg-success">Active</span></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+        <div class="text-end">
+          <button type="submit" class="btn btn-primary px-4">
+            {{ isEditMode ? 'Update Category' : 'Add Category' }}
+          </button>
+        </div>
+      </form>
     </div>
   </div>
+
+  <!-- Category Table -->
+  <div class="card table-card">
+    <div class="card-header">
+      <h5 class="mb-0">Category List</h5>
+    </div>
+    <div class="card-body table-responsive">
+      <table class="table table-bordered table-striped">
+        <thead class="table-light">
+          <tr>
+            <th>#</th>
+            <th>Category Name</th>
+            <th class="text-center">Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let cat of categories; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ cat.categoryName }}</td>
+            <td class="text-center">
+              <button
+                class="btn btn-sm btn-warning me-2"
+                (click)="editCategory(cat)"
+              >
+                Edit
+              </button>
+              <button
+                class="btn btn-sm btn-danger"
+                (click)="deleteCategory(cat.id)"
+              >
+                Delete
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="categories.length === 0">
+            <td colspan="3" class="text-center">No categories found.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
