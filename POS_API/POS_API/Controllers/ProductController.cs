@@ -22,7 +22,7 @@ namespace POS_API.Controllers
 
         // GET: api/Product
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ProductDto>>> GetAll()
+        public async Task<ActionResult<IEnumerable<ProductDto>>> GetAllProduct()
         {
             var products = await _context.Products.ToListAsync();
 
@@ -47,7 +47,7 @@ namespace POS_API.Controllers
 
         // GET: api/Product/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ProductDto>> GetById(int id)
+        public async Task<ActionResult<ProductDto>> GetProductById(int id)
         {
             var product = await _context.Products.FindAsync(id);
 
@@ -77,7 +77,7 @@ namespace POS_API.Controllers
 
         // POST: api/Product
         [HttpPost]
-        public async Task<IActionResult> Create([FromForm] ProductDto dto)
+        public async Task<IActionResult> CreateProduct([FromForm] ProductDto dto)
         {
             string? fileName = null;
 
@@ -112,12 +112,12 @@ namespace POS_API.Controllers
             _context.Products.Add(product);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetById), new { id = product.Id }, product);
+            return CreatedAtAction(nameof(GetProductById), new { id = product.Id }, product);
         }
 
         // PUT: api/Product/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromForm] ProductDto dto)
+        public async Task<IActionResult> UpdateProduct(int id, [FromForm] ProductDto dto)
         {
             var product = await _context.Products.FindAsync(id);
             if (product == null) return NotFound();
@@ -163,7 +163,7 @@ namespace POS_API.Controllers
 
         // DELETE: api/Product/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteProduct(int id)
         {
             var product = await _context.Products.FindAsync(id);
             if (product == null) return NotFound();

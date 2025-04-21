@@ -18,7 +18,7 @@ namespace POS_API.Controllers
         }
         // GET: api/Branches
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<BranchesDto>>> GetAll()
+        public async Task<ActionResult<IEnumerable<BranchesDto>>> GetAllBranches()
         {
             var branches = await _context.Branches
                 .Select(b => new BranchesDto
@@ -34,7 +34,7 @@ namespace POS_API.Controllers
 
         // GET: api/Branches/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<BranchesDto>> GetById(int id)
+        public async Task<ActionResult<BranchesDto>> GetBranchesById(int id)
         {
             var branch = await _context.Branches.FindAsync(id);
 
@@ -52,7 +52,7 @@ namespace POS_API.Controllers
 
         // POST: api/Branches
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] BranchesDto dto)
+        public async Task<IActionResult> CreateBranches([FromBody] BranchesDto dto)
         {
             var branch = new Branches
             {
@@ -64,12 +64,12 @@ namespace POS_API.Controllers
             await _context.SaveChangesAsync();
 
             dto.Id = branch.Id;
-            return CreatedAtAction(nameof(GetById), new { id = branch.Id }, dto);
+            return CreatedAtAction(nameof(GetBranchesById), new { id = branch.Id }, dto);
         }
 
         // PUT: api/Branches/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] BranchesDto dto)
+        public async Task<IActionResult> UpdateBranches(int id, [FromBody] BranchesDto dto)
         {
             if (id != dto.Id) return BadRequest();
 
@@ -85,7 +85,7 @@ namespace POS_API.Controllers
 
         // DELETE: api/Branches/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteBranches(int id)
         {
             var branch = await _context.Branches.FindAsync(id);
             if (branch == null) return NotFound();

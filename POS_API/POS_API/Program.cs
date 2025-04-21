@@ -15,6 +15,17 @@ builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAngularApp", policy =>
+    {
+        policy.WithOrigins("http://localhost:4200")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 builder.Services.AddIdentity<IdentityUser, IdentityRole>(options=>
 {
     options.Password.RequiredLength = 6;
@@ -60,6 +71,7 @@ if (app.Environment.IsDevelopment())
 }
 app.UseStaticFiles(); // Serves files from wwwroot
 app.UseHttpsRedirection();
+app.UseCors("AllowAngularApp");
 app.UseAuthentication();
 app.UseAuthorization();
 

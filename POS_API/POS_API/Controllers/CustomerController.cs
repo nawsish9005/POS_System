@@ -19,7 +19,7 @@ namespace POS_API.Controllers
 
         // GET: api/Customers
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CustomerDto>>> GetAll()
+        public async Task<ActionResult<IEnumerable<CustomerDto>>> GetAllCustomer()
         {
             var customers = await _context.Customers
                 .Select(c => new CustomerDto
@@ -37,7 +37,7 @@ namespace POS_API.Controllers
 
         // GET: api/Customers/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<CustomerDto>> GetById(int id)
+        public async Task<ActionResult<CustomerDto>> GetCustomerById(int id)
         {
             var customer = await _context.Customers.FindAsync(id);
 
@@ -58,7 +58,7 @@ namespace POS_API.Controllers
 
         // POST: api/Customers
         [HttpPost]
-        public async Task<IActionResult> Create([FromBody] CustomerDto dto)
+        public async Task<IActionResult> CreateCustomer([FromBody] CustomerDto dto)
         {
             var customer = new Customer
             {
@@ -72,12 +72,12 @@ namespace POS_API.Controllers
             await _context.SaveChangesAsync();
 
             dto.Id = customer.Id;
-            return CreatedAtAction(nameof(GetById), new { id = customer.Id }, dto);
+            return CreatedAtAction(nameof(GetCustomerById), new { id = customer.Id }, dto);
         }
 
         // PUT: api/Customers/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, [FromBody] CustomerDto dto)
+        public async Task<IActionResult> UpdateCustomer(int id, [FromBody] CustomerDto dto)
         {
             if (id != dto.Id)
                 return BadRequest();
@@ -97,7 +97,7 @@ namespace POS_API.Controllers
 
         // DELETE: api/Customers/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteCustomer(int id)
         {
             var customer = await _context.Customers.FindAsync(id);
             if (customer == null)

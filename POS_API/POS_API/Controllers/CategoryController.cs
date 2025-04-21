@@ -8,7 +8,7 @@ using POS_API.Models;
 
 namespace POS_API.Controllers
 {
-    [Authorize("Roles =Admin")]
+    //[Authorize("Roles =Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class CategoryController : ControllerBase
@@ -22,7 +22,7 @@ namespace POS_API.Controllers
 
         // GET: api/category
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<CategoryDto>>> GetAll()
+        public async Task<ActionResult<IEnumerable<CategoryDto>>> GetAllCategory()
         {
             var categories = await _context.Categories
                 .Select(c => new CategoryDto
@@ -37,7 +37,7 @@ namespace POS_API.Controllers
 
         // GET: api/category/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<CategoryDto>> GetById(int id)
+        public async Task<ActionResult<CategoryDto>> GetCategoryById(int id)
         {
             var category = await _context.Categories.FindAsync(id);
             if (category == null)
@@ -52,7 +52,7 @@ namespace POS_API.Controllers
 
         // POST: api/category
         [HttpPost]
-        public async Task<ActionResult<CategoryDto>> Create(CategoryDto dto)
+        public async Task<ActionResult<CategoryDto>> CreateCategory(CategoryDto dto)
         {
             var category = new Category
             {
@@ -64,31 +64,34 @@ namespace POS_API.Controllers
 
             dto.Id = category.Id; // return newly created Id
 
-            return CreatedAtAction(nameof(GetById), new { id = category.Id }, dto);
+            return CreatedAtAction(nameof(GetCategoryById), new { id = category.Id }, dto);
         }
 
         // PUT: api/category/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, CategoryDto dto)
+        public async Task<IActionResult> UpdateCategory(int id, CategoryDto dto)
         {
             if (id != dto.Id)
                 return BadRequest("ID mismatch");
 
-            var category = await _context.Categories.FindAsync(id);
-            if (category == null)
+            var existingCategory = await _context.Categories.FirstOrDefaultAsync(c => c.Id == id);
+
+            if (existingCategory == null)
                 return NotFound();
 
-            category.CategoryName = dto.CategoryName;
+            // Update only the fields you want to change
+            existingCategory.CategoryName = dto.CategoryName;
 
-            _context.Entry(category).State = EntityState.Modified;
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
+
+
         // DELETE: api/category/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteCategory(int id)
         {
             var category = await _context.Categories.FindAsync(id);
             if (category == null)
