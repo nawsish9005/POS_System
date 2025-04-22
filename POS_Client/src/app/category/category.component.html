@@ -17,8 +17,8 @@
             class="form-control"
             formControlName="categoryName"
             placeholder="Enter category name"
-            required
-          />
+            required />
+            
           <div
             class="text-danger"
             *ngIf="categoryForm.controls['categoryName'].touched && categoryForm.controls['categoryName'].invalid"
@@ -55,18 +55,12 @@
             <td>{{ i + 1 }}</td>
             <td>{{ cat.categoryName }}</td>
             <td class="text-center">
-              <button
-                class="btn btn-sm btn-warning me-2"
+              <button class="btn btn-sm btn-warning me-2"
                 (click)="editCategory(cat)"
-              >
-                Edit
-              </button>
-              <button
-                class="btn btn-sm btn-danger"
+              > Edit </button>
+              <button class="btn btn-sm btn-danger"
                 (click)="deleteCategory(cat.id)"
-              >
-                Delete
-              </button>
+              > Delete </button>
             </td>
           </tr>
           <tr *ngIf="categories.length === 0">
