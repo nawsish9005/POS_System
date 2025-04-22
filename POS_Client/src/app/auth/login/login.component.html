@@ -4,16 +4,28 @@
       <h4>Login</h4>
     </div>
     <div class="card-body">
+      <!-- Error message -->
+      <div *ngIf="errorMessage" class="alert alert-danger text-center">
+        {{ errorMessage }}
+      </div>
+
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
         <div class="mb-3">
           <label for="userName">Username</label>
-          <input type="text" id="userName" formControlName="userName" class="form-control" />
+          <input type="text" id="userName" formControlName="userName" class="form-control"
+                 [class.is-invalid]="loginForm.get('userName')?.invalid && loginForm.get('userName')?.touched" />
         </div>
+
         <div class="mb-3">
           <label for="password">Password</label>
-          <input type="password" id="password" formControlName="password" class="form-control" />
+          <input type="password" id="password" formControlName="password" class="form-control"
+                 [class.is-invalid]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched" />
         </div>
-        <button class="btn btn-primary w-100">Login</button>
+
+        <button class="btn btn-primary w-100" type="submit"
+                [disabled]="isSubmitting || loginForm.invalid">
+          {{ isSubmitting ? 'Logging in...' : 'Login' }}
+        </button>
       </form>
     </div>
   </div>

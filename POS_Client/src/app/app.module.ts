@@ -13,8 +13,9 @@ import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { ReactiveFormsModule } from '@angular/forms';
 import { LoginComponent } from './auth/login/login.component';
 import { RegistrationComponent } from './auth/registration/registration.component';
-import { JwtInterceptor } from './auth/jwt.interceptor';
 import { DashboardComponent } from './dashboard/dashboard.component';
+import { AuthInterceptor } from './auth/auth.interceptor';
+import { LogoutComponent } from './auth/logout/logout.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { DashboardComponent } from './dashboard/dashboard.component';
     LoginComponent,
     RegistrationComponent,
     DashboardComponent,
+    LogoutComponent,
   ],
   imports: [
     HttpClientModule,
@@ -36,7 +38,11 @@ import { DashboardComponent } from './dashboard/dashboard.component';
     ReactiveFormsModule,
   ],
   providers: [
-    { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true }
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AuthInterceptor,
+      multi: true,
+    }
   ],
   bootstrap: [AppComponent]
 })

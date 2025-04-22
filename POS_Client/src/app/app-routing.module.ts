@@ -14,7 +14,8 @@ const routes: Routes = [
   { path: 'register', title: 'Register', component: RegistrationComponent },
   { path: 'dashboard', title: 'Dashboard', component: DashboardComponent },
 
-  { path: 'category', title: 'Category', component: CategoryComponent, canActivate: [AuthGuard] },
+  { path: 'category', title: 'Category', component: CategoryComponent, canActivate: [AuthGuard],
+    data: { roles: ['Admin'] }},
   { path: 'customer', title: 'Customer', component: CustomerComponent, canActivate: [AuthGuard] },
   { path: 'branches', title: 'Branches', component: BranchesComponent, canActivate: [AuthGuard] },
   { path: 'product', title: 'Product', component: ProductComponent, canActivate: [AuthGuard] },
