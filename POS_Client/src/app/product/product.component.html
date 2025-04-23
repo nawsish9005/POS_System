@@ -1,1 +1,110 @@
-<p>product works!</p>
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<div class="content">
+    <!-- Product Input Form -->
+    <div class="card w-75 mx-auto mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">{{ isEditMode ? 'Edit Product' : 'Add Product' }}</h5>
+      </div>
+      <div class="card-body">
+        <form [formGroup]="productForm" (ngSubmit)="onSubmit()" enctype="multipart/form-data">
+          <div class="mb-3">
+            <label class="form-label">Name</label>
+            <input type="text" class="form-control" formControlName="name" required>
+          </div>
+  
+          <div class="mb-3">
+            <label class="form-label">Photo</label>
+            <input type="file" class="form-control" (change)="onFileChange($event)">
+          </div>
+  
+          <div class="mb-3">
+            <label class="form-label">Stock Quantity</label>
+            <input type="number" class="form-control" formControlName="stockQuantity" required>
+          </div>
+  
+          <div class="mb-3">
+            <label class="form-label">Price</label>
+            <input type="number" class="form-control" formControlName="price" required>
+          </div>
+  
+          <div class="mb-3">
+            <label class="form-label">Manufacture Date</label>
+            <input type="date" class="form-control" formControlName="manufactureDate" required>
+          </div>
+  
+          <div class="mb-3">
+            <label class="form-label">Expiry Date</label>
+            <input type="date" class="form-control" formControlName="expiryDate" required>
+          </div>
+  
+          <div class="mb-3">
+            <label class="form-label">Branch</label>
+            <select class="form-select" formControlName="branchId">
+              <option *ngFor="let b of branches" [value]="b.id">{{ b.branchName }}</option>
+            </select>
+          </div>
+  
+          <div class="mb-3">
+            <label class="form-label">Category</label>
+            <select class="form-select" formControlName="categoryId">
+              <option *ngFor="let c of categories" [value]="c.id">{{ c.categoryName }}</option>
+            </select>
+          </div>
+  
+          <div class="mb-3">
+            <label class="form-label">Supplier</label>
+            <select class="form-select" formControlName="supplierId">
+              <option *ngFor="let s of suppliers" [value]="s.id">{{ s.companyName }}</option>
+            </select>
+          </div>
+  
+          <div class="text-end">
+            <button type="submit" class="btn btn-primary px-4">{{ isEditMode ? 'Update' : 'Add' }}</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  
+    <!-- Product Table -->
+    <div class="card">
+      <div class="card-header">
+        <h5>Product List</h5>
+      </div>
+      <div class="card-body table-responsive">
+        <table class="table table-bordered table-striped">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Price</th>
+              <th>Stock</th>
+              <th>Photo</th>
+              <th>Branch</th>
+              <th>Category</th>
+              <th>Supplier</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let p of products; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td>{{ p.name }}</td>
+              <td>{{ p.price }}</td>
+              <td>{{ p.stockQuantity }}</td>
+              <td><img [src]="p.photoUrl" width="60" *ngIf="p.photoUrl"></td>
+              <td>{{ getCategoryName(p.categoryId) }}</td>
+                <td>{{ getSupplierName(p.supplierId) }}</td>
+                <td>{{ getBranchName(p.branchId) }}</td>
+              <td>
+                <button class="btn btn-sm btn-info me-2" (click)="editProduct(p)">Edit</button>
+                <button class="btn btn-sm btn-danger" (click)="deleteProduct(p.id)">Delete</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  

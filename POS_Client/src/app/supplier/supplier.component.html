@@ -1,0 +1,81 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<div class="content">
+    <div class="card w-75 mx-auto mb-4">
+      <div class="card-header">
+        <h5>{{ isEditMode ? 'Edit Supplier' : 'Add Supplier' }}</h5>
+      </div>
+      <div class="card-body">
+        <form [formGroup]="supplierForm" (ngSubmit)="onSubmit()">
+          <div class="mb-3">
+            <label class="form-label">Company Name</label>
+            <input type="text" class="form-control" formControlName="companyName" required>
+          </div>
+  
+          <div class="mb-3">
+            <label class="form-label">Contact Name</label>
+            <input type="text" class="form-control" formControlName="contactName" required>
+          </div>
+  
+          <div class="mb-3">
+            <label class="form-label">Phone</label>
+            <input type="text" class="form-control" formControlName="phone" required>
+          </div>
+  
+          <div class="mb-3">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-control" formControlName="email" required>
+          </div>
+  
+          <div class="mb-3">
+            <label class="form-label">Address</label>
+            <textarea class="form-control" formControlName="address" rows="3"></textarea>
+          </div>
+  
+          <div class="text-end">
+            <button type="submit" class="btn btn-primary px-4">
+              {{ isEditMode ? 'Update' : 'Add' }}
+            </button>
+            <button type="button" class="btn btn-secondary ms-2" (click)="resetForm()">Clear</button>
+          </div>
+        </form>
+      </div>
+    </div>
+  
+    <div class="card">
+      <div class="card-header">
+        <h5>Supplier List</h5>
+      </div>
+      <div class="card-body table-responsive">
+        <table class="table table-bordered table-hover">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Company</th>
+              <th>Contact</th>
+              <th>Phone</th>
+              <th>Email</th>
+              <th>Address</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let s of suppliers; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td>{{ s.companyName }}</td>
+              <td>{{ s.contactName }}</td>
+              <td>{{ s.phone }}</td>
+              <td>{{ s.email }}</td>
+              <td>{{ s.address }}</td>
+              <td>
+                <button class="btn btn-sm btn-info me-2" (click)="editSupplier(s)">Edit</button>
+                <button class="btn btn-sm btn-danger" (click)="deleteSupplier(s.id)">Delete</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  

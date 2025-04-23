@@ -16,6 +16,7 @@ import { RegistrationComponent } from './auth/registration/registration.componen
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { AuthInterceptor } from './auth/auth.interceptor';
 import { LogoutComponent } from './auth/logout/logout.component';
+import { SupplierComponent } from './supplier/supplier.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { LogoutComponent } from './auth/logout/logout.component';
     RegistrationComponent,
     DashboardComponent,
     LogoutComponent,
+    SupplierComponent,
   ],
   imports: [
     HttpClientModule,

@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -78,9 +79,9 @@ export class PosService {
 
   public productUrl = "/Product";
 
-  public GetAllProduct(){
-    return this.http.get(this.baseUrl + this.productUrl);
-   }
+  GetAllProduct(): Observable<any[]> {
+    return this.http.get<any[]>(this.baseUrl + this.productUrl);
+  }
 
    public GetProductById(id: number){
     return this.http.get(this.baseUrl + this.productUrl + "/" + id);
@@ -96,6 +97,29 @@ export class PosService {
   
   public DeleteProduct(id: number){
     return this.http.delete(this.baseUrl + this.productUrl + "/" + id);
+  }
+
+
+  public supplierUrl = "/Supplier";
+
+  public GetAllSupplier(){
+    return this.http.get(this.baseUrl + this.supplierUrl);
+   }
+
+   public GetSupplierById(id: number){
+    return this.http.get(this.baseUrl + this.supplierUrl + "/" + id);
+  }
+
+  public CreateSupplier(data: any){
+    return this.http.post(this.baseUrl + this.supplierUrl, data);
+  }
+  
+  public UpdateSupplier(id:number, data: any){
+    return this.http.put(`${this.baseUrl + this.supplierUrl}/${id}`, data)
+  }
+  
+  public DeleteSupplier(id: number){
+    return this.http.delete(this.baseUrl + this.supplierUrl + "/" + id);
   }
 
 }
