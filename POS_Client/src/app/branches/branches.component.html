@@ -1,1 +1,61 @@
-<p>branches works!</p>
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<div class="content">
+    <!-- Branch Input Form -->
+    <div class="card w-75 mx-auto mb-4">
+      <div class="card-header">
+        <h5 class="mb-0">{{ isEditMode ? 'Edit Branch' : 'Add Branch' }}</h5>
+      </div>
+      <div class="card-body">
+        <form [formGroup]="branchForm" (ngSubmit)="onSubmit()">
+          <div class="mb-3">
+            <label class="form-label">Branch Name</label>
+            <input type="text" class="form-control" formControlName="branchName" placeholder="Enter branch name" required>
+          </div>
+  
+          <div class="mb-3">
+            <label class="form-label">Location</label>
+            <input type="text" class="form-control" formControlName="location" placeholder="Enter location" required>
+          </div>
+  
+          <div class="text-end">
+            <button type="submit" class="btn btn-primary px-4" [disabled]="branchForm.invalid">
+              {{ isEditMode ? 'Update Branch' : 'Add Branch' }}
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  
+    <!-- Branch Table -->
+    <div class="card table-card">
+      <div class="card-header">
+        <h5 class="mb-0">Branch List</h5>
+      </div>
+      <div class="card-body table-responsive">
+        <table class="table table-bordered table-striped">
+          <thead class="table-light">
+            <tr>
+              <th>#</th>
+              <th>Branch Name</th>
+              <th>Location</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let branch of branches; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td>{{ branch.branchName }}</td>
+              <td>{{ branch.location }}</td>
+              <td>
+                <button class="btn btn-sm btn-info me-2" (click)="editBranch(branch)">Edit</button>
+                <button class="btn btn-sm btn-danger" (click)="deleteBranch(branch.id)">Delete</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+  
