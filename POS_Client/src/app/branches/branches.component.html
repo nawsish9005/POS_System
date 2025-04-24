@@ -23,6 +23,7 @@
             <button type="submit" class="btn btn-primary px-4" [disabled]="branchForm.invalid">
               {{ isEditMode ? 'Update Branch' : 'Add Branch' }}
             </button>
+            <button type="button" class="btn btn-secondary ms-2" (click)="resetForm()">Clear</button>
           </div>
         </form>
       </div>

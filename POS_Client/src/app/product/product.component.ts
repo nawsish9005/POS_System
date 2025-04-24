@@ -13,7 +13,8 @@ export class ProductComponent implements OnInit {
   branches: any[] = [];
   categories: any[] = [];
   suppliers: any[] = [];
-
+  selectedProduct: any = null;
+  selectedFile: File | null = null;
   isEditMode = false;
   selectedProductId: number | null = null;
   selectedPhoto: File | null = null;
@@ -40,10 +41,14 @@ export class ProductComponent implements OnInit {
     });
   }
 
-  loadProducts() {
+  loadProducts(): void {
     this.posService.GetAllProduct().subscribe(
-      (data: any) => this.products = data,
-      error => console.error('Error loading products', error)
+      (data: any[]) => {
+        this.products = data; // PhotoUrl is already full URL
+      },
+      error => {
+        console.error('Error fetching products:', error);
+      }
     );
   }
 
@@ -126,23 +131,51 @@ export class ProductComponent implements OnInit {
   }
 
   editProduct(product: any) {
-    this.productForm.patchValue(product);
     this.isEditMode = true;
     this.selectedProductId = product.id;
+    this.selectedProduct = product;
+    this.selectedPhoto = null;
+  
+    this.productForm.patchValue({
+      name: product.name,
+      price: product.price,
+      stockQuantity: product.stockQuantity,
+      expiryDate: this.formatDate(product.expiryDate),
+      manufactureDate: this.formatDate(product.manufactureDate),
+      branchId: product.branchId,
+      categoryId: product.categoryId,
+      supplierId: product.supplierId,
+      photo: null
+    });
+  }
+  
+  // Helper function to convert datetime to YYYY-MM-DD
+  formatDate(dateString: string): string {
+    return dateString ? dateString.split('T')[0] : '';
+  }
+  
+  
+  onFileChange(event: any) {
+    this.selectedPhoto = event.target.files[0];
+  
+    if (this.selectedPhoto) {
+      const reader = new FileReader();
+      reader.onload = (e: any) => {
+        this.selectedProduct = e.target.result;
+      };
+      reader.readAsDataURL(this.selectedPhoto);
+    }
   }
 
   deleteProduct(id: number) {
     this.posService.DeleteProduct(id).subscribe(() => this.loadProducts());
   }
-
-  onFileChange(event: any) {
-    this.selectedPhoto = event.target.files[0];
-  }
-
+  
   resetForm() {
     this.productForm.reset();
     this.isEditMode = false;
     this.selectedProductId = null;
     this.selectedPhoto = null;
   }
+  
 }
