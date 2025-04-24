@@ -19,7 +19,7 @@ namespace POS_API.Controllers
 
         // GET: api/Supplier
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<SupplierDto>>> GetAll()
+        public async Task<ActionResult<IEnumerable<SupplierDto>>> GetAllSupplier()
         {
             var suppliers = await _context.Suppliers
                 .Select(s => new SupplierDto
@@ -37,7 +37,7 @@ namespace POS_API.Controllers
 
         // GET: api/Supplier/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<SupplierDto>> GetById(int id)
+        public async Task<ActionResult<SupplierDto>> GetSupplierById(int id)
         {
             var supplier = await _context.Suppliers.FindAsync(id);
 
@@ -59,7 +59,7 @@ namespace POS_API.Controllers
 
         // POST: api/Supplier
         [HttpPost]
-        public async Task<IActionResult> Create(SupplierDto dto)
+        public async Task<IActionResult> CreateSupplier(SupplierDto dto)
         {
             var supplier = new Supplier
             {
@@ -78,7 +78,7 @@ namespace POS_API.Controllers
 
         // PUT: api/Supplier/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(int id, SupplierDto dto)
+        public async Task<IActionResult> UpdateSupplier(int id, SupplierDto dto)
         {
             var supplier = await _context.Suppliers.FindAsync(id);
 
@@ -98,7 +98,7 @@ namespace POS_API.Controllers
 
         // DELETE: api/Supplier/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> Delete(int id)
+        public async Task<IActionResult> DeleteSupplier(int id)
         {
             var supplier = await _context.Suppliers.FindAsync(id);
 

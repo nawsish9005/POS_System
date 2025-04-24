@@ -1,6 +1,6 @@
 {
   "Version": 1,
-  "Hash": "G903T8hlavnDZWzH1rbGC2ar7N8+m1WNYFpd5TFQTm0=",
+  "Hash": "24njY1fWm5srqJiqZFwByYaYYk2PlSHNN40fjuMbg8o=",
   "Source": "POS_API",
   "BasePath": "_content/POS_API",
   "Mode": "Default",
@@ -17,12 +17,12 @@
   ],
   "Assets": [
     {
-      "Identity": "E:\\filessss\\POS_System\\POS_API\\POS_API\\wwwroot\\images\\87b571ed-92ea-4ad0-a9e6-414320530bae.jpg",
+      "Identity": "E:\\filessss\\POS_System\\POS_API\\POS_API\\wwwroot\\images\\b298a34e-2089-4b32-9398-7c2f0cad4ce0.jpg",
       "SourceId": "POS_API",
       "SourceType": "Discovered",
       "ContentRoot": "E:\\filessss\\POS_System\\POS_API\\POS_API\\wwwroot\\",
       "BasePath": "_content/POS_API",
-      "RelativePath": "images/87b571ed-92ea-4ad0-a9e6-414320530bae.jpg",
+      "RelativePath": "images/b298a34e-2089-4b32-9398-7c2f0cad4ce0.jpg",
       "AssetKind": "All",
       "AssetMode": "All",
       "AssetRole": "Primary",
@@ -33,7 +33,7 @@
       "AssetTraitValue": "",
       "CopyToOutputDirectory": "Never",
       "CopyToPublishDirectory": "PreserveNewest",
-      "OriginalItemSpec": "wwwroot\\images\\87b571ed-92ea-4ad0-a9e6-414320530bae.jpg"
+      "OriginalItemSpec": "wwwroot\\images\\b298a34e-2089-4b32-9398-7c2f0cad4ce0.jpg"
     }
   ]
 }

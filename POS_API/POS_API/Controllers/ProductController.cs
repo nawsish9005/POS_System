@@ -39,7 +39,7 @@ namespace POS_API.Controllers
                 BranchId = p.BranchId,
                 CategoryId = p.CategoryId,
                 SupplierId = p.SupplierId,
-                PhotoUrl = !string.IsNullOrEmpty(p.Photo) ? $"{baseUrl}/Uploads/{p.Photo}" : null
+                PhotoUrl = !string.IsNullOrEmpty(p.Photo) ? $"{baseUrl}/images/{p.Photo}" : null
             });
 
             return Ok(productDtos);
@@ -69,7 +69,7 @@ namespace POS_API.Controllers
                 SupplierId = product.SupplierId,
                 PhotoUrl = string.IsNullOrEmpty(product.Photo)
                     ? null
-                    : $"{Request.Scheme}://{Request.Host}/Uploads/{product.Photo}"
+                    : $"{Request.Scheme}://{Request.Host}/images/{product.Photo}"
             };
 
             return Ok(productDto);

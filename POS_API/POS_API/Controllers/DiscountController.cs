@@ -18,7 +18,7 @@ namespace POS_API.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<DiscountDto>>> GetAll()
+        public async Task<ActionResult<IEnumerable<DiscountDto>>> GetAllDiscount()
         {
             var discounts = await _context.Discounts
                 .Select(d => new DiscountDto
@@ -34,7 +34,7 @@ namespace POS_API.Controllers
         }
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<DiscountDto>> GetById(int id)
+        public async Task<ActionResult<DiscountDto>> GetDiscountById(int id)
         {
             var discount = await _context.Discounts.FindAsync(id);
             if (discount == null) return NotFound();
@@ -51,7 +51,7 @@ namespace POS_API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult> Create(DiscountDto dto)
+        public async Task<ActionResult> CreateDiscount(DiscountDto dto)
         {
             var discount = new Discount
             {
@@ -65,11 +65,11 @@ namespace POS_API.Controllers
 
             dto.Id = discount.Id;
 
-            return CreatedAtAction(nameof(GetById), new { id = discount.Id }, dto);
+            return CreatedAtAction(nameof(GetDiscountById), new { id = discount.Id }, dto);
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult> Update(int id, DiscountDto dto)
+        public async Task<ActionResult> UpdateDiscount(int id, DiscountDto dto)
         {
             var discount = await _context.Discounts.FindAsync(id);
             if (discount == null) return NotFound();
@@ -84,7 +84,7 @@ namespace POS_API.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<ActionResult> Delete(int id)
+        public async Task<ActionResult> DeleteDiscount(int id)
         {
             var discount = await _context.Discounts.FindAsync(id);
             if (discount == null) return NotFound();

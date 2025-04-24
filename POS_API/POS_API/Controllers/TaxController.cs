@@ -35,7 +35,7 @@ namespace POS_API.Controllers
 
         // GET: api/Tax/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<TaxDto>> GetTax(int id)
+        public async Task<ActionResult<TaxDto>> GetTaxById(int id)
         {
             var tax = await _context.Taxes.FindAsync(id);
 
@@ -65,7 +65,7 @@ namespace POS_API.Controllers
 
             dto.Id = tax.Id;
 
-            return CreatedAtAction(nameof(GetTax), new { id = tax.Id }, dto);
+            return CreatedAtAction(nameof(GetTaxById), new { id = tax.Id }, dto);
         }
 
         // PUT: api/Tax/5
