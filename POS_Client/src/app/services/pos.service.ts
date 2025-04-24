@@ -122,4 +122,51 @@ export class PosService {
     return this.http.delete(this.baseUrl + this.supplierUrl + "/" + id);
   }
 
+  
+
+
+  public discountUrl = "/Discount";
+
+  public GetAllDiscount(){
+    return this.http.get(this.baseUrl + this.discountUrl);
+   }
+
+   public GetDiscountById(id: number){
+    return this.http.get(this.baseUrl + this.discountUrl + "/" + id);
+  }
+
+  public CreateDiscount(data: any){
+    return this.http.post(this.baseUrl + this.discountUrl, data);
+  }
+  
+  public UpdateDiscount(id:number, data: any){
+    return this.http.put(`${this.baseUrl + this.discountUrl}/${id}`, data)
+  }
+  
+  public DeleteDiscount(id: number){
+    return this.http.delete(this.baseUrl + this.discountUrl + "/" + id);
+  }
+
+
+  public taxUrl = "/Tax";
+
+  public GetTaxes(){
+    return this.http.get(this.baseUrl + this.taxUrl);
+   }
+
+   public GetTaxById(id: number){
+    return this.http.get(this.baseUrl + this.taxUrl + "/" + id);
+  }
+
+  public CreateTax(data: any){
+    return this.http.post(this.baseUrl + this.taxUrl, data);
+  }
+  
+  public UpdateTax(id:number, data: any){
+    return this.http.put(`${this.baseUrl + this.taxUrl}/${id}`, data)
+  }
+  
+  public DeleteTax(id: number){
+    return this.http.delete(this.baseUrl + this.taxUrl + "/" + id);
+  }
 }

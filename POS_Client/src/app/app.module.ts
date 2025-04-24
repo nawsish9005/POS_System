@@ -17,6 +17,8 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { AuthInterceptor } from './auth/auth.interceptor';
 import { LogoutComponent } from './auth/logout/logout.component';
 import { SupplierComponent } from './supplier/supplier.component';
+import { DiscountComponent } from './discount/discount.component';
+import { TaxComponent } from './tax/tax.component';
 
 @NgModule({
   declarations: [
@@ -32,6 +34,8 @@ import { SupplierComponent } from './supplier/supplier.component';
     DashboardComponent,
     LogoutComponent,
     SupplierComponent,
+    DiscountComponent,
+    TaxComponent,
   ],
   imports: [
     HttpClientModule,

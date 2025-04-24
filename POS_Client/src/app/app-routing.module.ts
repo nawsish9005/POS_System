@@ -9,18 +9,21 @@ import { RegistrationComponent } from './auth/registration/registration.componen
 import { AuthGuard } from './auth/auth.guard';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { SupplierComponent } from './supplier/supplier.component';
+import { DiscountComponent } from './discount/discount.component';
+import { TaxComponent } from './tax/tax.component';
 
 const routes: Routes = [
   { path: 'login', title: 'Login', component: LoginComponent },
   { path: 'register', title: 'Register', component: RegistrationComponent },
   { path: 'dashboard', title: 'Dashboard', component: DashboardComponent },
 
-  { path: 'category', title: 'Category', component: CategoryComponent, canActivate: [AuthGuard],
-    data: { roles: ['Admin'] }},
+  { path: 'category', title: 'Category', component: CategoryComponent, canActivate: [AuthGuard]},
   { path: 'customer', title: 'Customer', component: CustomerComponent, canActivate: [AuthGuard] },
   { path: 'branches', title: 'Branches', component: BranchesComponent, canActivate: [AuthGuard] },
   { path: 'product', title: 'Product', component: ProductComponent, canActivate: [AuthGuard] },
   { path: 'supplier', title: 'Supplier', component: SupplierComponent, canActivate: [AuthGuard] },
+  { path: 'discount', title: 'Discount', component: DiscountComponent, canActivate: [AuthGuard] },
+  { path: 'tax', title: 'Tax', component: TaxComponent, canActivate: [AuthGuard] },
 
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' }
