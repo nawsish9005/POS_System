@@ -42,7 +42,7 @@ namespace POS_API.Controllers
 
         // GET: api/PurchaseItem/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<PurchaseItemDto>> GetPurchaseItem(int id)
+        public async Task<ActionResult<PurchaseItemDto>> GetPurchaseItemById(int id)
         {
             var purchaseItem = await _context.PurchaseItems
                 .Include(pi => pi.Purchase)
@@ -85,7 +85,7 @@ namespace POS_API.Controllers
             await _context.SaveChangesAsync();
 
             dto.Id = purchaseItem.Id;
-            return CreatedAtAction(nameof(GetPurchaseItem), new { id = purchaseItem.Id }, dto);
+            return CreatedAtAction(nameof(GetPurchaseItemById), new { id = purchaseItem.Id }, dto);
         }
 
         // PUT: api/PurchaseItem/5
