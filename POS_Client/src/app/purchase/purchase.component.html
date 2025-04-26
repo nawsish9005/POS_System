@@ -1,0 +1,86 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<div class="content">
+  <div class="card w-75 mx-auto mb-4">
+    <div class="card-header">
+      <h5>{{ isEditMode ? 'Edit Purchase' : 'Add Purchase' }}</h5>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="purchaseForm" (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+          <label>Supplier</label>
+          <select class="form-select" formControlName="supplierId">
+            <option *ngFor="let s of suppliers" [value]="s.id">{{ s.companyName }}</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label>Purchase Date</label>
+          <input type="date" class="form-control" formControlName="purchaseDate">
+        </div>
+
+        <div formArrayName="purchaseItems">
+          <div *ngFor="let item of purchaseItems.controls; let i=index" [formGroupName]="i" class="mb-3 border p-3 rounded">
+            <label>Product ID</label>
+            <label>Product</label>
+            <select formControlName="productId" class="form-select mb-2">
+                <option *ngFor="let product of products" [value]="product.id">{{ product.name }}</option>
+            </select>
+
+            <label>Quantity</label>
+            <input type="number" formControlName="quantity" class="form-control mb-2" (input)="calculateTotalAmount()">
+
+            <label>Unit Price</label>
+            <input type="number" formControlName="unitPrice" class="form-control" (input)="calculateTotalAmount()">
+
+            <button type="button" class="btn btn-danger mt-2" (click)="removeItem(i)">Remove Item</button>
+          </div>
+        </div>
+
+        <button type="button" class="btn btn-secondary mb-3" (click)="addItem()">Add Item</button>
+
+        <div class="mb-3">
+          <label>Total Amount</label>
+          <input type="number" class="form-control" formControlName="totalAmount" readonly>
+        </div>
+
+        <div class="text-end">
+          <button type="submit" class="btn btn-primary">{{ isEditMode ? 'Update' : 'Add' }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Purchase Table -->
+  <div class="card">
+    <div class="card-header">
+      <h5>Purchase List</h5>
+    </div>
+    <div class="card-body table-responsive">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Supplier</th>
+            <th>Date</th>
+            <th>Total Amount</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let p of purchases; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ findSupplierNameById(p.supplierId) }}</td>
+            <td>{{ p.purchaseDate | date }}</td>
+            <td>{{ p.totalAmount }}</td>
+            <td>
+              <button class="btn btn-info btn-sm me-2" (click)="editPurchase(p)">Edit</button>
+              <button class="btn btn-danger btn-sm" (click)="deletePurchase(p.id)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

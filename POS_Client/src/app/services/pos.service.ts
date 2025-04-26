@@ -169,4 +169,49 @@ export class PosService {
   public DeleteTax(id: number){
     return this.http.delete(this.baseUrl + this.taxUrl + "/" + id);
   }
+
+  public purchaseUrl = "/Purchase";
+
+  public GetPurchases(){
+    return this.http.get(this.baseUrl + this.purchaseUrl);
+   }
+
+   public GetPurchaseById(id: number){
+    return this.http.get(this.baseUrl + this.purchaseUrl + "/" + id);
+  }
+
+  public CreatePurchase(data: any){
+    return this.http.post(this.baseUrl + this.purchaseUrl, data);
+  }
+  
+  public UpdatePurchase(id:number, data: any){
+    return this.http.put(`${this.baseUrl + this.purchaseUrl}/${id}`, data)
+  }
+  
+  public DeletePurchase(id: number){
+    return this.http.delete(this.baseUrl + this.purchaseUrl + "/" + id);
+  }
+
+
+  public purchaseItemUrl = "/PurchaseItem";
+
+  public GetPurchaseItems(){
+    return this.http.get(this.baseUrl + this.purchaseItemUrl);
+   }
+
+   public GetPurchaseItemById(id: number){
+    return this.http.get(this.baseUrl + this.purchaseItemUrl + "/" + id);
+  }
+
+  public CreatePurchaseItem(data: any){
+    return this.http.post(this.baseUrl + this.purchaseItemUrl, data);
+  }
+  
+  public UpdatePurchaseItem(id:number, data: any){
+    return this.http.put(`${this.baseUrl + this.purchaseItemUrl}/${id}`, data)
+  }
+  
+  public DeletePurchaseItem(id: number){
+    return this.http.delete(this.baseUrl + this.purchaseItemUrl + "/" + id);
+  }
 }

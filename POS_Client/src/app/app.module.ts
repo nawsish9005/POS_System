@@ -19,6 +19,8 @@ import { LogoutComponent } from './auth/logout/logout.component';
 import { SupplierComponent } from './supplier/supplier.component';
 import { DiscountComponent } from './discount/discount.component';
 import { TaxComponent } from './tax/tax.component';
+import { PurchaseComponent } from './purchase/purchase.component';
+import { PurchaseItemComponent } from './purchase-item/purchase-item.component';
 
 @NgModule({
   declarations: [
@@ -36,6 +38,8 @@ import { TaxComponent } from './tax/tax.component';
     SupplierComponent,
     DiscountComponent,
     TaxComponent,
+    PurchaseComponent,
+    PurchaseItemComponent,
   ],
   imports: [
     HttpClientModule,

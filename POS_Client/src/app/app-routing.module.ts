@@ -11,6 +11,8 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { SupplierComponent } from './supplier/supplier.component';
 import { DiscountComponent } from './discount/discount.component';
 import { TaxComponent } from './tax/tax.component';
+import { PurchaseComponent } from './purchase/purchase.component';
+import { PurchaseItemComponent } from './purchase-item/purchase-item.component';
 
 const routes: Routes = [
   { path: 'login', title: 'Login', component: LoginComponent },
@@ -24,6 +26,8 @@ const routes: Routes = [
   { path: 'supplier', title: 'Supplier', component: SupplierComponent, canActivate: [AuthGuard] },
   { path: 'discount', title: 'Discount', component: DiscountComponent, canActivate: [AuthGuard] },
   { path: 'tax', title: 'Tax', component: TaxComponent, canActivate: [AuthGuard] },
+  { path: 'purchase', title: 'Purchase', component: PurchaseComponent, canActivate: [AuthGuard] },
+  { path: 'purchaseItem', title: 'PurchaseItem', component: PurchaseItemComponent, canActivate: [AuthGuard] },
 
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' }

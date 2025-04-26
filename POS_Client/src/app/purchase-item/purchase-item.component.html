@@ -1,0 +1,83 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<div class="content">
+  <div class="card w-75 mx-auto mb-4">
+    <div class="card-header">
+      <h5>{{ isEditMode ? 'Edit Purchase Item' : 'Add Purchase Item' }}</h5>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="purchaseItemForm" (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+          <label>Purchase</label>
+          <select class="form-select" formControlName="purchaseId">
+            <option *ngFor="let p of purchases" [value]="p.id">Purchase #{{ p.id }}</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label>Product</label>
+          <select class="form-select" formControlName="productId">
+            <option *ngFor="let product of products" [value]="product.id">{{ product.name }}</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label>Quantity</label>
+          <input type="number" class="form-control" formControlName="quantity">
+        </div>
+
+        <div class="mb-3">
+          <label>Unit Cost</label>
+          <input type="number" class="form-control" formControlName="unitCost">
+        </div>
+
+        <div class="mb-3">
+          <label>Subtotal</label>
+          <input type="number" class="form-control" formControlName="subtotal" readonly>
+        </div>
+
+        <div class="text-end">
+          <button type="submit" class="btn btn-primary">{{ isEditMode ? 'Update' : 'Add' }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Table -->
+  <div class="card">
+    <div class="card-header">
+      <h5>Purchase Items</h5>
+    </div>
+    <div class="card-body table-responsive">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Purchase</th>
+            <th>Product</th>
+            <th>Quantity</th>
+            <th>Unit Cost</th>
+            <th>Subtotal</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let item of purchaseItems; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ item.purchaseId }}</td>
+            <td>{{ getProductName(item.productId) }}</td>
+            <td>{{ item.quantity }}</td>
+            <td>{{ item.unitCost }}</td>
+            <td>{{ item.subtotal }}</td>
+
+            <td>
+              <button class="btn btn-info btn-sm me-2" (click)="edit(item)">Edit</button>
+              <button class="btn btn-danger btn-sm" (click)="delete(item.id)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
