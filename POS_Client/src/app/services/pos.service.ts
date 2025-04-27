@@ -214,4 +214,19 @@ export class PosService {
   public DeletePurchaseItem(id: number){
     return this.http.delete(this.baseUrl + this.purchaseItemUrl + "/" + id);
   }
+
+
+  
+  public updateProfileUrl = "/Account/UpdateProfile";
+  public getProfileUrl = "/Account/GetProfile";
+
+  public updateProfile(data: any) {
+    return this.http.put(`${this.baseUrl}${this.updateProfileUrl}`, data);
+  }
+
+  public GetProfile() {
+    return this.http.get(`${this.baseUrl}${this.getProfileUrl}`);
+  }
+
+
 }
