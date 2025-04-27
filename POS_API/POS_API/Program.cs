@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using POS_API.Data;
+using POS_API.Models; // Include this for the User class
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,8 +12,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<PosDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
-// Add Identity
-builder.Services.AddIdentity<IdentityUser, IdentityRole>(options =>
+// Add Identity with custom User class
+builder.Services.AddIdentity<User, IdentityRole>(options =>
 {
     options.Password.RequiredLength = 6;
     options.Password.RequireNonAlphanumeric = false;

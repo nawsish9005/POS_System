@@ -6,7 +6,7 @@ namespace POS_API.Models
 {
     public class User: IdentityUser
     {
-        public string FullName { get; set; }
+        //public string UserName { get; set; }
         public ICollection<Sale> Sales { get; set; }
     }
 }
