@@ -32,14 +32,12 @@ namespace POS_API.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterDto registerDto)
         {
-            // Validate the input
             if (registerDto.Password != registerDto.ConfirmPassword)
             {
                 return BadRequest("Passwords do not match.");
             }
 
-            // Check if the username or email already exists
-            var existingUser = await _userManager.FindByNameAsync(registerDto.Username);
+            var existingUser = await _userManager.FindByNameAsync(registerDto.UserName);
             if (existingUser != null)
             {
                 return BadRequest("Username already exists.");
@@ -51,52 +49,52 @@ namespace POS_API.Controllers
                 return BadRequest("Email already exists.");
             }
 
-            // Create the new User based on the RegisterDto
             var user = new User
             {
-                UserName = registerDto.Username,
+                UserName = registerDto.UserName,
                 Email = registerDto.Email
             };
 
-            // Create the user in the database
             var result = await _userManager.CreateAsync(user, registerDto.Password);
 
             if (result.Succeeded)
             {
-                // Optionally, assign roles or additional logic here
                 return Ok(new { Message = "Registration successful" });
             }
 
-            // If creation fails, return the errors
             return BadRequest(result.Errors.Select(e => e.Description));
         }
 
         // POST: api/account/login
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] Login login)
+        public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
-            var user = await _userManager.FindByNameAsync(login.UserName);
-            if (user != null && await _userManager.CheckPasswordAsync(user, login.Password))
+            var user = await _userManager.FindByNameAsync(loginDto.UserName);
+            if (user != null && await _userManager.CheckPasswordAsync(user, loginDto.Password))
             {
                 var userRoles = await _userManager.GetRolesAsync(user);
+
                 var authClaims = new List<Claim>
                 {
                     new Claim(JwtRegisteredClaimNames.Sub, user.UserName!),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
                     new Claim(ClaimTypes.NameIdentifier, user.Id)
                 };
+
                 authClaims.AddRange(userRoles.Select(role => new Claim(ClaimTypes.Role, role)));
 
                 var token = new JwtSecurityToken(
                     issuer: _configuration["Jwt:Issuer"],
                     expires: DateTime.Now.AddMinutes(double.Parse(_configuration["Jwt:ExpiryMinutes"])),
                     claims: authClaims,
-                    signingCredentials: new SigningCredentials(new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"])),
+                    signingCredentials: new SigningCredentials(
+                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"])),
                         SecurityAlgorithms.HmacSha256)
                 );
 
                 return Ok(new { Token = new JwtSecurityTokenHandler().WriteToken(token) });
             }
+
             return Unauthorized();
         }
 
@@ -135,71 +133,72 @@ namespace POS_API.Controllers
             return BadRequest(result.Errors);
         }
 
-        // PUT: api/account/update-profile
+        // GET: api/account/getprofile
+        [HttpGet("getprofile")]
         [Authorize]
-        [HttpPut("update-profile")]
-        public async Task<IActionResult> UpdateProfile([FromBody] UpdateProfileDto model)
-        {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Get logged-in user's ID
-
-            if (string.IsNullOrEmpty(userId))
-            {
-                return Unauthorized("Invalid user token.");
-            }
-
-            var user = await _userManager.FindByIdAsync(userId);
-            if (user == null)
-            {
-                return NotFound("User not found.");
-            }
-
-            // Update allowed fields
-            if (!string.IsNullOrEmpty(model.UserName))
-                user.UserName = model.UserName;
-
-            if (!string.IsNullOrEmpty(model.Email))
-                user.Email = model.Email;
-
-            if (!string.IsNullOrEmpty(model.PhoneNumber))
-                user.PhoneNumber = model.PhoneNumber;
-
-            var result = await _userManager.UpdateAsync(user);
-
-            if (!result.Succeeded)
-            {
-                return BadRequest(result.Errors);
-            }
-
-            return Ok("Profile updated successfully!");
-        }
-
-        // GET: api/account/profile
-        [Authorize]
-        [HttpGet("profile")]
         public async Task<IActionResult> GetProfile()
         {
-            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier); // Get logged-in user's ID
-
-            if (string.IsNullOrEmpty(userId))
+            // Log all claims (for debugging)
+            Console.WriteLine("User Claims:");
+            foreach (var claim in User.Claims)
             {
-                return Unauthorized("Invalid user token.");
+                Console.WriteLine($"{claim.Type}: {claim.Value}");
             }
 
-            var user = await _userManager.FindByIdAsync(userId);
+            // Try to get user from UserManager
+            var user = await _userManager.GetUserAsync(User);
+
             if (user == null)
             {
-                return NotFound("User not found.");
+                // Try manually getting UserId from claims
+                var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+                if (string.IsNullOrEmpty(userId))
+                {
+                    return Unauthorized("User ID not found in token claims.");
+                }
+
+                user = await _userManager.FindByIdAsync(userId);
+
+                if (user == null)
+                {
+                    return NotFound("User not found by ID.");
+                }
             }
 
-            // Create a response model for the user profile
-            var profile = new UpdateProfileDto
+            var profileData = new
             {
-                UserName = user.UserName,
-                Email = user.Email,
-                PhoneNumber = user.PhoneNumber
+                user.UserName,
+                user.Email,
+                user.PhoneNumber
             };
 
-            return Ok(profile); // Return the user's profile
+            return Ok(profileData);
+        }
+
+
+        // PUT: api/account/updateprofile
+        [HttpPut("UpdateProfile")]
+        [Authorize]
+        public async Task<IActionResult> UpdateProfile(UpdateProfileDto model)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null)
+            {
+                return NotFound("User not found");
+            }
+
+            user.UserName = model.UserName;
+            user.Email = model.Email;
+            user.PhoneNumber = model.PhoneNumber;
+
+            var result = await _userManager.UpdateAsync(user);
+            if (result.Succeeded)
+            {
+                return Ok("Profile updated successfully");
+            }
+
+            return BadRequest(result.Errors);
         }
     }
 }
