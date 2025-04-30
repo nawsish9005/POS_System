@@ -133,38 +133,15 @@ namespace POS_API.Controllers
             return BadRequest(result.Errors);
         }
 
-        // GET: api/account/getprofile
         [HttpGet("getprofile")]
         [Authorize]
         public async Task<IActionResult> GetProfile()
         {
-            // Log all claims (for debugging)
-            Console.WriteLine("User Claims:");
-            foreach (var claim in User.Claims)
-            {
-                Console.WriteLine($"{claim.Type}: {claim.Value}");
-            }
-
-            // Try to get user from UserManager
-            var user = await _userManager.GetUserAsync(User);
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var user = await _userManager.FindByIdAsync(userId);
 
             if (user == null)
-            {
-                // Try manually getting UserId from claims
-                var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-                if (string.IsNullOrEmpty(userId))
-                {
-                    return Unauthorized("User ID not found in token claims.");
-                }
-
-                user = await _userManager.FindByIdAsync(userId);
-
-                if (user == null)
-                {
-                    return NotFound("User not found by ID.");
-                }
-            }
+                return Unauthorized("User not found");
 
             var profileData = new
             {
@@ -177,21 +154,23 @@ namespace POS_API.Controllers
         }
 
 
-        // PUT: api/account/updateprofile
-        [HttpPut("UpdateProfile")]
         [Authorize]
+        [HttpPut("updateprofile")]
         public async Task<IActionResult> UpdateProfile(UpdateProfileDto model)
         {
+            // Retrieve the currently logged-in user
             var user = await _userManager.GetUserAsync(User);
             if (user == null)
             {
                 return NotFound("User not found");
             }
 
+            // Update the user's details
             user.UserName = model.UserName;
             user.Email = model.Email;
             user.PhoneNumber = model.PhoneNumber;
 
+            // Update the user in the database
             var result = await _userManager.UpdateAsync(user);
             if (result.Succeeded)
             {
