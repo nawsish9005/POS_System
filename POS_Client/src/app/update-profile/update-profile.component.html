@@ -1,36 +1,55 @@
 <div class="container mt-4">
-    <h2>Update Profile</h2>
-  
-    <form [formGroup]="profileForm" (ngSubmit)="onSubmit()">
-      <div class="mb-3">
-        <label for="userName" class="form-label">Username</label>
-        <input type="text" id="userName" class="form-control" formControlName="userName">
-      </div>
-  
-      <div class="mb-3">
-        <label for="email" class="form-label">Email</label>
-        <input type="email" id="email" class="form-control" formControlName="email">
-      </div>
-  
-      <div class="mb-3">
-        <label for="phoneNumber" class="form-label">Phone Number</label>
-        <input type="text" id="phoneNumber" class="form-control" formControlName="phoneNumber">
-      </div>
-  
-      <div class="mb-3">
-        <label for="fullName" class="form-label">Full Name</label>
-        <input type="text" id="fullName" class="form-control" formControlName="fullName">
-      </div>
-  
-      <button type="submit" class="btn btn-primary">Update Profile</button>
-    </form>
-  
-    <div *ngIf="successMessage" class="alert alert-success mt-3">
-      {{ successMessage }}
+  <div class="card shadow">
+    <div class="card-header bg-primary text-white">
+      <h4 class="mb-0">Profile Details</h4>
     </div>
-  
-    <div *ngIf="errorMessage" class="alert alert-danger mt-3">
-      {{ errorMessage }}
+    <div class="card-body">
+      <form *ngIf="profileData" [formGroup]="profileForm" (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+          <label for="UserName" class="form-label">Username</label>
+          <input type="text" class="form-control" id="UserName" formControlName="UserName">
+          <div *ngIf="f['UserName'].invalid && (f['UserName'].dirty || f['UserName'].touched)" class="text-danger">
+            <div *ngIf="f['UserName'].errors?.['required']">Username is required</div>
+            <div *ngIf="f['UserName'].errors?.['minlength']">Username must be at least 3 characters</div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="Email" class="form-label">Email</label>
+          <input type="email" class="form-control" id="Email" formControlName="Email">
+          <div *ngIf="f['Email'].invalid && (f['Email'].dirty || f['Email'].touched)" class="text-danger">
+            <div *ngIf="f['Email'].errors?.['required']">Email is required</div>
+            <div *ngIf="f['Email'].errors?.['email']">Please enter a valid email</div>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="PhoneNumber" class="form-label">Phone Number</label>
+          <input type="tel" class="form-control" id="PhoneNumber" formControlName="PhoneNumber">
+          <div *ngIf="f['PhoneNumber'].invalid && (f['PhoneNumber'].dirty || f['PhoneNumber'].touched)" class="text-danger">
+            <div *ngIf="f['PhoneNumber'].errors?.['required']">Phone number is required</div>
+            <div *ngIf="f['PhoneNumber'].errors?.['pattern']">Please enter a valid Bangladeshi phone number</div>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" [disabled]="profileForm.invalid || isLoading">
+          <span *ngIf="isLoading" class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+          {{ isLoading ? 'Updating...' : 'Update Profile' }}
+        </button>
+
+        <div *ngIf="successMessage" class="alert alert-success mt-3">
+          {{ successMessage }}
+        </div>
+        <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+          {{ errorMessage }}
+        </div>
+      </form>
+
+      <div *ngIf="!profileData && !errorMessage" class="text-center">
+        <div class="spinner-border" role="status">
+          <span class="visually-hidden">Loading...</span>
+        </div>
+      </div>
     </div>
   </div>
-  
+</div>

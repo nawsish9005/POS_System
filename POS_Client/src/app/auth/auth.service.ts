@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, tap } from 'rxjs';
 import { jwtDecode } from 'jwt-decode';
 import { Router } from '@angular/router';
 
@@ -8,7 +8,8 @@ import { Router } from '@angular/router';
   providedIn: 'root',
 })
 export class AuthService {
-  private baseUrl = 'https://localhost:7293/api/account/';
+  private readonly baseUrl = 'https://localhost:7293/api/account/';
+  private readonly tokenKey = 'token'; // use a constant for token key
 
   constructor(private http: HttpClient, private router: Router) {}
 
@@ -17,62 +18,93 @@ export class AuthService {
     return this.http.post(`${this.baseUrl}register`, model);
   }
 
-  // Login user and save the JWT token in localStorage
+
   login(model: any): Observable<any> {
-    return this.http.post(`${this.baseUrl}login`, model);
+    return this.http.post(`${this.baseUrl}login`, model).pipe(
+      tap((response: any) => {
+        const token = response?.token || response?.Token;
+        if (!token) {
+          throw new Error('No token in response');
+        }
+        this.saveToken(token);
+      })
+    );
   }
 
-  // Logout by removing token from localStorage
+  // Logout
   logout(): void {
-    // Remove the token from localStorage or sessionStorage
-    localStorage.removeItem('token');
-    console.log(localStorage.getItem('token')); // Should log 'null'
-
-
-    // Optionally, navigate to the login page
+    localStorage.removeItem(this.tokenKey);
+    console.log('Token removed:', this.getToken()); // Should log 'null'
     this.router.navigate(['/login']);
   }
 
-  // Check if the user is authenticated
+  // Check if user is authenticated
   isAuthenticated(): boolean {
-    const token = localStorage.getItem('token');
-    return !!token && this.isTokenValid(token); // Added token validation check
-  }
-
-  // Get the JWT token from localStorage
-  getToken(): string | null {
-    return localStorage.getItem('token');
-  }
-
-  // Save JWT token to localStorage
-  saveToken(token: string): void {
-    localStorage.setItem('token', token);
-  }
-
-  // Get user roles from the token
-  getUserRoles(): string[] {
     const token = this.getToken();
-    if (!token) return [];
-    const decoded: any = jwtDecode(token);
-    const roles = decoded['role'];
-    return Array.isArray(roles) ? roles : roles ? [roles] : [];
+    return !!token && this.isTokenValid(token);
   }
 
-  // Check if a token is valid (basic validation)
-  private isTokenValid(token: string): boolean {
+  // Save token
+  saveToken(token: string): void {
+    localStorage.setItem(this.tokenKey, token);
+  }
+
+  // Get token
+  getToken(): string | null {
+    return localStorage.getItem(this.tokenKey);
+  }
+
+  // Decode token
+  private decodeToken(token: string): any | null {
     try {
-      const decoded: any = jwtDecode(token);
-      return decoded && decoded.exp * 1000 > Date.now(); // Check expiration date
-    } catch (e) {
-      return false;
+      return jwtDecode(token);
+    } catch (error) {
+      console.error('Invalid token', error);
+      return null;
     }
   }
 
-  // Add Authorization header with Bearer token
-  getAuthHeaders(): HttpHeaders {
-    const token = this.getToken();
-    return token
-      ? new HttpHeaders().set('Authorization', `Bearer ${token}`)
-      : new HttpHeaders();
+  // Validate token
+  private isTokenValid(token: string): boolean {
+    const decoded = this.decodeToken(token);
+    if (!decoded || !decoded.exp) {
+      return false;
+    }
+    return decoded.exp * 1000 > Date.now(); // Check if not expired
   }
+
+  // Get user roles
+  getUserRoles(): string[] {
+    const token = this.getToken();
+    if (!token) return [];
+    const decoded: any = this.decodeToken(token);
+    const roles = decoded?.role;
+    return Array.isArray(roles) ? roles : roles ? [roles] : [];
+  }
+
+  // Get username from token
+  getUsername(): string | null {
+    const token = this.getToken();
+    if (!token) return null;
+    const decoded: any = this.decodeToken(token);
+    return decoded?.sub || null; // In your backend, sub = username
+  }
+
+  // Get userId from token
+  getUserId(): string | null {
+    const token = this.getToken();
+    if (!token) return null;
+    const decoded: any = this.decodeToken(token);
+    return decoded?.nameid || null; // In your backend, nameid = userId
+  }
+
+  getAuthHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');  // Correct key is 'token'
+    let headers = new HttpHeaders();
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
+    return headers;
+  }
+  
 }

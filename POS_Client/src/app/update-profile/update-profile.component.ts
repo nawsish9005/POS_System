@@ -7,18 +7,21 @@ import { PosService } from '../services/pos.service';
   templateUrl: './update-profile.component.html',
   styleUrls: ['./update-profile.component.css']
 })
-export class UpdateProfileComponent implements OnInit{
+export class UpdateProfileComponent implements OnInit {
   profileForm: FormGroup;
+  profileData: any = null;
   successMessage: string = '';
   errorMessage: string = '';
   isLoading: boolean = false;
 
-  constructor(private fb: FormBuilder, private posService: PosService) {
+  constructor(
+    private fb: FormBuilder, 
+    private posService: PosService
+  ) {
     this.profileForm = this.fb.group({
-      userName: ['', [Validators.required, Validators.minLength(3)]],
-      email: ['', [Validators.required, Validators.email]],
-      phoneNumber: ['', [Validators.required, Validators.pattern(/^(\+88|0088)?(01[3-9]\d{8})$/)]],
-      fullName: ['', [Validators.required, Validators.minLength(3)]]
+      UserName: ['', [Validators.required, Validators.minLength(3)]],
+      Email: ['', [Validators.required, Validators.email]],
+      PhoneNumber: ['', [Validators.required, Validators.pattern(/^(\+88|0088)?(01[3-9]\d{8})$/)]],
     });
   }
 
@@ -26,47 +29,50 @@ export class UpdateProfileComponent implements OnInit{
     this.loadProfileData();
   }
 
-  // Load the current user profile data
-  private loadProfileData(): void {
+  loadProfileData() {
     this.isLoading = true;
-    this.posService.GetProfile().subscribe({
-      next: (data) => {
-        this.profileForm.patchValue(data);
+    this.posService.GetProfile().subscribe(
+      (response: any) => {
+        this.profileData = response;
+        // Map the response to match the form controls
+        this.profileForm.patchValue({
+          UserName: response.userName || response.UserName,
+          Email: response.email || response.Email,
+          PhoneNumber: response.phoneNumber || response.PhoneNumber
+        });
         this.isLoading = false;
       },
-      error: (err) => {
+      error => {
+        console.error('Error loading profile', error);
         this.errorMessage = 'Error loading profile';
         this.isLoading = false;
-        console.error('Error loading profile', err);
       }
-    });
+    );
   }
-
-  // Update the profile
+  
   onSubmit(): void {
     if (this.profileForm.invalid) {
       return;
     }
-
+    
     this.isLoading = true;
     const updatedProfile = this.profileForm.value;
 
     this.posService.updateProfile(updatedProfile).subscribe({
       next: (res) => {
         this.successMessage = 'Profile updated successfully!';
-        this.errorMessage = ''; // Clear any previous error message
+        this.errorMessage = '';
         this.isLoading = false;
+        this.loadProfileData(); // Refresh data
       },
       error: (err) => {
-        this.errorMessage = 'Error updating profile';
-        this.successMessage = ''; // Clear any previous success message
+        this.errorMessage = err.error?.message || 'Error updating profile';
+        this.successMessage = '';
         this.isLoading = false;
-        console.error('Error updating profile', err);
       }
-    });
+    });  
   }
 
-  // Getter for easy form control access
   get f() {
     return this.profileForm.controls;
   }

@@ -1,13 +1,14 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { AuthService } from '../auth/auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class PosService {
   private baseUrl = 'https://localhost:7293/api';
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient, private authService: AuthService) { }
 
   public customerUrl = "/customer";
 
@@ -216,17 +217,16 @@ export class PosService {
   }
 
 
-  
-  public updateProfileUrl = "/Account/UpdateProfile";
-  public getProfileUrl = "/Account/GetProfile";
 
-  public updateProfile(data: any) {
-    return this.http.put(`${this.baseUrl}${this.updateProfileUrl}`, data);
-  }
+// pos.service.ts
+private updateProfileUrl = '/account/updateprofile';
+private getProfileUrl = '/account/getprofile';
 
-  public GetProfile() {
-    return this.http.get(`${this.baseUrl}${this.getProfileUrl}`);
-  }
+public updateProfile(data: any): Observable<any> {
+  return this.http.put(`${this.baseUrl}${this.updateProfileUrl}`, data);
+}
 
-
+public GetProfile(): Observable<any> {
+  return this.http.get(`${this.baseUrl}${this.getProfileUrl}`);
+}
 }
