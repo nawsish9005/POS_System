@@ -5,7 +5,7 @@ using POS_API.Models;
 
 namespace POS_API.Data
 {
-    public class PosDbContext : IdentityDbContext<IdentityUser>
+    public class PosDbContext : IdentityDbContext<User>
     {
         public PosDbContext(DbContextOptions<PosDbContext> options) : base(options) { }
 

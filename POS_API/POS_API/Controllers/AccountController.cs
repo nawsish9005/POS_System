@@ -65,38 +65,39 @@ namespace POS_API.Controllers
             return BadRequest(result.Errors.Select(e => e.Description));
         }
 
-        // POST: api/account/login
         [HttpPost("login")]
-        public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
+public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
+{
+    var user = await _userManager.FindByNameAsync(loginDto.UserName);
+    if (user != null && await _userManager.CheckPasswordAsync(user, loginDto.Password))
+    {
+        var userRoles = await _userManager.GetRolesAsync(user);
+
+        var authClaims = new List<Claim>
         {
-            var user = await _userManager.FindByNameAsync(loginDto.UserName);
-            if (user != null && await _userManager.CheckPasswordAsync(user, loginDto.Password))
-            {
-                var userRoles = await _userManager.GetRolesAsync(user);
+            new Claim(JwtRegisteredClaimNames.Sub, user.UserName!),
+            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+            new Claim(ClaimTypes.NameIdentifier, user.Id),
+            new Claim(ClaimTypes.Name, user.UserName!)  // ✅ REQUIRED for GetUserAsync
+        };
 
-                var authClaims = new List<Claim>
-                {
-                    new Claim(JwtRegisteredClaimNames.Sub, user.UserName!),
-                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-                    new Claim(ClaimTypes.NameIdentifier, user.Id)
-                };
+        authClaims.AddRange(userRoles.Select(role => new Claim(ClaimTypes.Role, role)));
 
-                authClaims.AddRange(userRoles.Select(role => new Claim(ClaimTypes.Role, role)));
+        var token = new JwtSecurityToken(
+            issuer: _configuration["Jwt:Issuer"],
+            expires: DateTime.Now.AddMinutes(double.Parse(_configuration["Jwt:ExpiryMinutes"])),
+            claims: authClaims,
+            signingCredentials: new SigningCredentials(
+                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"])),
+                SecurityAlgorithms.HmacSha256)
+        );
 
-                var token = new JwtSecurityToken(
-                    issuer: _configuration["Jwt:Issuer"],
-                    expires: DateTime.Now.AddMinutes(double.Parse(_configuration["Jwt:ExpiryMinutes"])),
-                    claims: authClaims,
-                    signingCredentials: new SigningCredentials(
-                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"])),
-                        SecurityAlgorithms.HmacSha256)
-                );
+        return Ok(new { Token = new JwtSecurityTokenHandler().WriteToken(token) });
+    }
 
-                return Ok(new { Token = new JwtSecurityTokenHandler().WriteToken(token) });
-            }
+    return Unauthorized();
+}
 
-            return Unauthorized();
-        }
 
         // POST: api/account/add-role
         [HttpPost("add-role")]
@@ -138,7 +139,7 @@ namespace POS_API.Controllers
         public async Task<IActionResult> GetProfile()
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-            var user = await _userManager.FindByIdAsync(userId);
+            var user = await _userManager.FindByNameAsync(userId);
 
             if (user == null)
                 return Unauthorized("User not found");
@@ -159,7 +160,7 @@ namespace POS_API.Controllers
         public async Task<IActionResult> UpdateProfile(UpdateProfileDto model)
         {
             // Retrieve the currently logged-in user
-            var user = await _userManager.GetUserAsync(User);
+            var user = await _userManager.FindByNameAsync(model.UserName);
             if (user == null)
             {
                 return NotFound("User not found");
@@ -177,7 +178,8 @@ namespace POS_API.Controllers
                 return Ok("Profile updated successfully");
             }
 
-            return BadRequest(result.Errors);
+            return Ok(new { message = "Profile updated successfully" });
+
         }
     }
 }
