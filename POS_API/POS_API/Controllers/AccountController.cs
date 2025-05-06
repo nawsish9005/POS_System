@@ -66,47 +66,50 @@ namespace POS_API.Controllers
         }
 
         [HttpPost("login")]
-public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
-{
-    var user = await _userManager.FindByNameAsync(loginDto.UserName);
-    if (user != null && await _userManager.CheckPasswordAsync(user, loginDto.Password))
-    {
-        var userRoles = await _userManager.GetRolesAsync(user);
-
-        var authClaims = new List<Claim>
+        public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
         {
-            new Claim(JwtRegisteredClaimNames.Sub, user.UserName!),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-            new Claim(ClaimTypes.NameIdentifier, user.Id),
-            new Claim(ClaimTypes.Name, user.UserName!)  // ✅ REQUIRED for GetUserAsync
-        };
+            var user = await _userManager.FindByNameAsync(loginDto.UserName);
+            if (user != null && await _userManager.CheckPasswordAsync(user, loginDto.Password))
+            {
+                var userRoles = await _userManager.GetRolesAsync(user);
 
-        authClaims.AddRange(userRoles.Select(role => new Claim(ClaimTypes.Role, role)));
+                var authClaims = new List<Claim>
+                {
+                    new Claim(JwtRegisteredClaimNames.Sub, user.UserName!),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim(ClaimTypes.NameIdentifier, user.Id),
+                    new Claim(ClaimTypes.Name, user.UserName!)  // ✅ REQUIRED for GetUserAsync
+                };
 
-        var token = new JwtSecurityToken(
-            issuer: _configuration["Jwt:Issuer"],
-            expires: DateTime.Now.AddMinutes(double.Parse(_configuration["Jwt:ExpiryMinutes"])),
-            claims: authClaims,
-            signingCredentials: new SigningCredentials(
-                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"])),
-                SecurityAlgorithms.HmacSha256)
-        );
+                authClaims.AddRange(userRoles.Select(role => new Claim(ClaimTypes.Role, role)));
 
-        return Ok(new { Token = new JwtSecurityTokenHandler().WriteToken(token) });
-    }
+                var token = new JwtSecurityToken(
+                    issuer: _configuration["Jwt:Issuer"],
+                    expires: DateTime.Now.AddMinutes(double.Parse(_configuration["Jwt:ExpiryMinutes"])),
+                    claims: authClaims,
+                    signingCredentials: new SigningCredentials(
+                        new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"])),
+                        SecurityAlgorithms.HmacSha256)
+                );
 
-    return Unauthorized();
-}
+                return Ok(new { Token = new JwtSecurityTokenHandler().WriteToken(token) });
+            }
+
+            return Unauthorized();
+        }
 
 
         // POST: api/account/add-role
         [HttpPost("add-role")]
-        public async Task<IActionResult> AddRole([FromBody] string role)
+        public async Task<IActionResult> AddRole([FromBody] RoleDto dto)
         {
-            var roleExists = await _roleManager.RoleExistsAsync(role);
+            if (string.IsNullOrWhiteSpace(dto.Name))
+                return BadRequest("Role name is required");
+
+            var roleExists = await _roleManager.RoleExistsAsync(dto.Name);
             if (!roleExists)
             {
-                var result = await _roleManager.CreateAsync(new IdentityRole(role));
+                var result = await _roleManager.CreateAsync(new IdentityRole(dto.Name));
                 if (result.Succeeded)
                 {
                     return Ok(new { Message = "Role created successfully" });
@@ -114,6 +117,70 @@ public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
                 return BadRequest(result.Errors);
             }
             return BadRequest("Role already exists");
+        }
+
+
+        [HttpGet("get-roles")]
+        public IActionResult GetRoles()
+        {
+            var roles = _roleManager.Roles
+                .Select(r => new { id = r.Id, name = r.Name })
+                .ToList();
+
+            return Ok(roles);
+        }
+
+
+
+        // Get role by ID
+        [HttpGet("getRoleById")]
+        public async Task<IActionResult> GetRoleById(string id)
+        {
+            var role = await _roleManager.FindByIdAsync(id);
+            if (role == null)
+                return NotFound("Role not found");
+
+            return Ok(role);
+        }
+
+        // PUT: api/account/roleUpdate?id=roleId
+        [HttpPut("roleUpdate")]
+        public async Task<IActionResult> UpdateRole([FromQuery] string id, [FromBody] RoleDto dto)
+        {
+            if (string.IsNullOrWhiteSpace(id) || string.IsNullOrWhiteSpace(dto.Name))
+                return BadRequest("Invalid role ID or new role name");
+
+            var role = await _roleManager.FindByIdAsync(id);
+            if (role == null)
+                return NotFound("Role not found");
+
+            var existingRole = await _roleManager.FindByNameAsync(dto.Name);
+            if (existingRole != null && existingRole.Id != id)
+                return BadRequest("A role with the new name already exists");
+
+            role.Name = dto.Name;
+            var result = await _roleManager.UpdateAsync(role);
+
+            if (result.Succeeded)
+                return Ok(new { Message = "Role updated successfully" });
+
+            return BadRequest(result.Errors);
+        }
+
+
+        // Delete role by ID
+        [HttpDelete("roleDelete")]
+        public async Task<IActionResult> DeleteRole(string id)
+        {
+            var role = await _roleManager.FindByIdAsync(id);
+            if (role == null)
+                return NotFound("Role not found");
+
+            var result = await _roleManager.DeleteAsync(role);
+
+            return result.Succeeded
+                ? Ok(new { Message = "Role deleted successfully" })
+                : BadRequest(result.Errors);
         }
 
         // POST: api/account/assign-role
@@ -154,7 +221,6 @@ public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
             return Ok(profileData);
         }
 
-
         [Authorize]
         [HttpPut("updateprofile")]
         public async Task<IActionResult> UpdateProfile(UpdateProfileDto model)
@@ -175,11 +241,11 @@ public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
             var result = await _userManager.UpdateAsync(user);
             if (result.Succeeded)
             {
-                return Ok("Profile updated successfully");
+                return Ok(new { message = "Profile updated successfully" });
+
             }
 
-            return Ok(new { message = "Profile updated successfully" });
-
+            return BadRequest(result.Errors);
         }
     }
 }
