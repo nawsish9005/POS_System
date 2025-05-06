@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 
@@ -229,4 +229,38 @@ public updateProfile(data: any): Observable<any> {
 public GetProfile(): Observable<any> {
   return this.http.get(`${this.baseUrl}${this.getProfileUrl}`);
 }
+
+
+private roleBaseUrl = this.baseUrl + '/account';
+
+// ✅ POST: Create a new role
+createRole(roleData: any): Observable<any> {
+  return this.http.post(`${this.roleBaseUrl}/add-role`, roleData);
+}
+
+updateRole(id: string, newRoleName: any): Observable<any> {
+  return this.http.put(`${this.roleBaseUrl}/roleUpdate?id=${id}`, newRoleName);
+}
+
+
+// ✅ GET: Get all roles (returning full objects with id + name)
+public getAllRoles() {
+  return this.http.get<string[]>(this.roleBaseUrl + '/get-roles');
+}
+
+// ✅ DELETE: Remove role
+public deleteRole(id: string) {
+  return this.http.delete(this.roleBaseUrl + `/roleDelete?id=${id}`);
+}
+
+// Assign role to user — unchanged
+public assignRole(data: { userName: string; role: string }) {
+  return this.http.post(this.roleBaseUrl + '/assign-role', data);
+}
+
+// Get role by ID — optional
+public getRoleById(id: string) {
+  return this.http.get(this.roleBaseUrl + `/getRoleById?id=${id}`);
+}
+
 }

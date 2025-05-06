@@ -22,6 +22,7 @@ import { TaxComponent } from './tax/tax.component';
 import { PurchaseComponent } from './purchase/purchase.component';
 import { PurchaseItemComponent } from './purchase-item/purchase-item.component';
 import { UpdateProfileComponent } from './update-profile/update-profile.component';
+import { RoleComponent } from './role/role.component';
 
 @NgModule({
   declarations: [
@@ -42,6 +43,7 @@ import { UpdateProfileComponent } from './update-profile/update-profile.componen
     PurchaseComponent,
     PurchaseItemComponent,
     UpdateProfileComponent,
+    RoleComponent,
   ],
   imports: [
     HttpClientModule,
