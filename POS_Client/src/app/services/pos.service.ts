@@ -171,26 +171,26 @@ export class PosService {
     return this.http.delete(this.baseUrl + this.taxUrl + "/" + id);
   }
 
-  public purchaseUrl = "/Purchase";
+  public stockUrl = "/Purchase";
 
-  public GetPurchases(){
-    return this.http.get(this.baseUrl + this.purchaseUrl);
+  public GetStocks(){
+    return this.http.get(this.baseUrl + this.stockUrl);
    }
 
-   public GetPurchaseById(id: number){
-    return this.http.get(this.baseUrl + this.purchaseUrl + "/" + id);
+   public GetStockById(id: number){
+    return this.http.get(this.baseUrl + this.stockUrl + "/" + id);
   }
 
-  public CreatePurchase(data: any){
-    return this.http.post(this.baseUrl + this.purchaseUrl, data);
+  public CreateStock(data: any){
+    return this.http.post(this.baseUrl + this.stockUrl, data);
   }
   
-  public UpdatePurchase(id:number, data: any){
-    return this.http.put(`${this.baseUrl + this.purchaseUrl}/${id}`, data)
+  public UpdateStock(id:number, data: any){
+    return this.http.put(`${this.baseUrl + this.stockUrl}/${id}`, data)
   }
   
-  public DeletePurchase(id: number){
-    return this.http.delete(this.baseUrl + this.purchaseUrl + "/" + id);
+  public DeleteStock(id: number){
+    return this.http.delete(this.baseUrl + this.stockUrl + "/" + id);
   }
 
 

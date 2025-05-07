@@ -1,0 +1,91 @@
+<app-navbar></app-navbar>
+<app-sidebar></app-sidebar>
+
+<div class="content">
+  <div class="card w-75 mx-auto mb-4">
+    <div class="card-header">
+      <h5>{{ isEditMode ? 'Edit Stock' : 'Add Stock' }}</h5>
+    </div>
+    <div class="card-body">
+      <form [formGroup]="stockForm" (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+          <label>Supplier</label>
+          <select class="form-select" formControlName="supplierId">
+            <option *ngFor="let s of suppliers" [value]="s.id">{{ s.companyName }}</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label>Product</label>
+          <select class="form-select" formControlName="productId" (change)="calculateTotalAmount()">
+            <option *ngFor="let p of products" [value]="p.id">{{ p.name }}</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label>Quantity</label>
+          <input type="number" class="form-control" formControlName="quantity" (input)="calculateTotalAmount()">
+        </div>
+
+        <div class="mb-3">
+          <label>Branch</label>
+          <select class="form-select" formControlName="branchesId">
+            <option *ngFor="let b of branches" [value]="b.id">{{ b.name }}</option>
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label>Purchase Date</label>
+          <input type="date" class="form-control" formControlName="purchaseDate">
+        </div>
+
+        <div class="mb-3">
+          <label>Total Amount</label>
+          <input type="number" class="form-control" formControlName="totalAmount" readonly>
+        </div>
+
+        <div class="text-end">
+          <button type="submit" class="btn btn-primary">{{ isEditMode ? 'Update' : 'Add' }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Stock Table -->
+  <div class="card">
+    <div class="card-header">
+      <h5>Stock List</h5>
+    </div>
+    <div class="card-body table-responsive">
+      <table class="table table-bordered">
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Supplier</th>
+            <th>Product</th>
+            <th>Branch</th>
+            <th>Date</th>
+            <th>Quantity</th>
+            <th>Total Amount</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let s of stocks; let i = index">
+            <td>{{ i + 1 }}</td>
+            <td>{{ getSupplierName(s.supplierId) }}</td>
+            <td>{{ getProductName(s.productId) }}</td>
+            <td>{{ getBranchName(s.branchesId) }}</td>
+            <td>{{ s.purchaseDate | date }}</td>
+            <td>{{ s.quantity }}</td>
+            <td>{{ s.totalAmount }}</td>
+            <td>
+              <button class="btn btn-info btn-sm me-2" (click)="editStock(s)">Edit</button>
+              <button class="btn btn-danger btn-sm" (click)="deleteStock(s.id)">Delete</button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

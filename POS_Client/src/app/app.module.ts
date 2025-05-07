@@ -19,10 +19,10 @@ import { LogoutComponent } from './auth/logout/logout.component';
 import { SupplierComponent } from './supplier/supplier.component';
 import { DiscountComponent } from './discount/discount.component';
 import { TaxComponent } from './tax/tax.component';
-import { PurchaseComponent } from './purchase/purchase.component';
 import { PurchaseItemComponent } from './purchase-item/purchase-item.component';
 import { UpdateProfileComponent } from './update-profile/update-profile.component';
 import { RoleComponent } from './role/role.component';
+import { StockComponent } from './stock/stock.component';
 
 @NgModule({
   declarations: [
@@ -40,10 +40,10 @@ import { RoleComponent } from './role/role.component';
     SupplierComponent,
     DiscountComponent,
     TaxComponent,
-    PurchaseComponent,
     PurchaseItemComponent,
     UpdateProfileComponent,
     RoleComponent,
+    StockComponent,
   ],
   imports: [
     HttpClientModule,

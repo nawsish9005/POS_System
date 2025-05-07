@@ -50,7 +50,7 @@ export class PurchaseItemComponent implements OnInit{
   }
 
   loadPurchases() {
-    this.posService.GetPurchases().subscribe((data: any) => {
+    this.posService.GetStocks().subscribe((data: any) => {
       this.purchases = data;
     });
   }
