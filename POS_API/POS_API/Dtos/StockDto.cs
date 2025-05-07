@@ -11,8 +11,6 @@ namespace POS_API.Dtos
         public int BranchesId { get; set; }
         public DateTime PurchaseDate { get; set; }
         public decimal TotalAmount { get; set; }
-
-        public List<PurchaseItemDto> PurchaseItems { get; set; }
     }
 
 }
