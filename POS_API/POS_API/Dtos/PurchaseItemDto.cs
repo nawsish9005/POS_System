@@ -6,7 +6,7 @@ namespace POS_API.Dtos
     {
         public int Id { get; set; }
         [Required]
-        public int PurchaseId { get; set; }
+        public int StockId { get; set; }
         [Required]
         public int ProductId { get; set; }
         public int Quantity { get; set; }

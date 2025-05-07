@@ -22,7 +22,7 @@ namespace POS_API.Controllers
         public async Task<ActionResult<IEnumerable<PurchaseItemDto>>> GetPurchaseItems()
         {
             var purchaseItems = await _context.PurchaseItems
-                .Include(pi => pi.Purchase)
+                .Include(pi => pi.Stock)
                 .Include(pi => pi.Product)
                 .ToListAsync();
 
@@ -30,7 +30,7 @@ namespace POS_API.Controllers
             var purchaseItemsDto = purchaseItems.Select(pi => new PurchaseItemDto
             {
                 Id = pi.Id,
-                PurchaseId = pi.PurchaseId,
+                StockId = pi.StockId,
                 ProductId = pi.ProductId,
                 Quantity = pi.Quantity,
                 UnitCost = pi.UnitCost,
@@ -45,7 +45,7 @@ namespace POS_API.Controllers
         public async Task<ActionResult<PurchaseItemDto>> GetPurchaseItemById(int id)
         {
             var purchaseItem = await _context.PurchaseItems
-                .Include(pi => pi.Purchase)
+                .Include(pi => pi.Stock)
                 .Include(pi => pi.Product)
                 .FirstOrDefaultAsync(pi => pi.Id == id);
 
@@ -58,7 +58,7 @@ namespace POS_API.Controllers
             var purchaseItemDto = new PurchaseItemDto
             {
                 Id = purchaseItem.Id,
-                PurchaseId = purchaseItem.PurchaseId,
+                StockId = purchaseItem.StockId,
                 ProductId = purchaseItem.ProductId,
                 Quantity = purchaseItem.Quantity,
                 UnitCost = purchaseItem.UnitCost,
@@ -74,7 +74,7 @@ namespace POS_API.Controllers
         {
             var purchaseItem = new PurchaseItem
             {
-                PurchaseId = dto.PurchaseId,
+                StockId = dto.StockId,
                 ProductId = dto.ProductId,
                 Quantity = dto.Quantity,
                 UnitCost = dto.UnitCost,
@@ -99,7 +99,7 @@ namespace POS_API.Controllers
                 return NotFound();
             }
 
-            purchaseItem.PurchaseId = dto.PurchaseId;
+            purchaseItem.Subtotal = dto.StockId;
             purchaseItem.ProductId = dto.ProductId;
             purchaseItem.Quantity = dto.Quantity;
             purchaseItem.UnitCost = dto.UnitCost;

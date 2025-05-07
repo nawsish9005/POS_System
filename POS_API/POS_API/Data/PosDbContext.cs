@@ -15,15 +15,13 @@ namespace POS_API.Data
         public DbSet<Sale> Sales { get; set; }
         public DbSet<SaleItem> SaleItems { get; set; }
         public DbSet<Supplier> Suppliers { get; set; }
-        public DbSet<Purchase> Purchases { get; set; }
+        public DbSet<Stock> Stocks { get; set; }
         public DbSet<PurchaseItem> PurchaseItems { get; set; }
         public DbSet<Branches> Branches { get; set; }
         public DbSet<Discount> Discounts { get; set; }
         public DbSet<LoyaltyPoint> LoyaltyPoints { get; set; }
         public DbSet<Payment> Payments { get; set; }
         public DbSet<Tax> Taxes { get; set; }
-
-
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -36,20 +34,35 @@ namespace POS_API.Data
                 .HasForeignKey(p => p.CategoryId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Supplier - Purchase
-            modelBuilder.Entity<Purchase>()
-                .HasOne(p => p.Supplier)
-                .WithMany(s => s.Purchases)
-                .HasForeignKey(p => p.SupplierId)
+            // Supplier - Stock
+            modelBuilder.Entity<Stock>()
+                .HasOne(s => s.Supplier)
+                .WithMany(s => s.Stocks)
+                .HasForeignKey(s => s.SupplierId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Purchase - PurchaseItem
+            // Stock - Branch
+            modelBuilder.Entity<Stock>()
+                .HasOne(s => s.Branches)
+                .WithMany()
+                .HasForeignKey(s => s.BranchesId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Stock - Product
+            modelBuilder.Entity<Stock>()
+                .HasOne(s => s.Product)
+                .WithMany()
+                .HasForeignKey(s => s.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // PurchaseItem - Stock
             modelBuilder.Entity<PurchaseItem>()
-                .HasOne(pi => pi.Purchase)
-                .WithMany(p => p.PurchaseItems)
-                .HasForeignKey(pi => pi.PurchaseId)
+                .HasOne(pi => pi.Stock)
+                .WithMany(s => s.PurchaseItems)
+                .HasForeignKey(pi => pi.StockId)
                 .OnDelete(DeleteBehavior.Restrict);
 
+            // PurchaseItem - Product
             modelBuilder.Entity<PurchaseItem>()
                 .HasOne(pi => pi.Product)
                 .WithMany()
@@ -63,6 +76,7 @@ namespace POS_API.Data
                 .HasForeignKey(si => si.SaleId)
                 .OnDelete(DeleteBehavior.Cascade);
 
+            // SaleItem - Product
             modelBuilder.Entity<SaleItem>()
                 .HasOne(si => si.Product)
                 .WithMany()
@@ -83,20 +97,21 @@ namespace POS_API.Data
                 .HasForeignKey(s => s.CustomerId)
                 .OnDelete(DeleteBehavior.SetNull);
 
+            // Product - Branch
             modelBuilder.Entity<Product>()
-            .HasOne(p => p.Branches)
-            .WithMany(b => b.Products)
-            .HasForeignKey(p => p.BranchId)
-            .OnDelete(DeleteBehavior.Cascade);
+                .HasOne(p => p.Branches)
+                .WithMany(b => b.Products)
+                .HasForeignKey(p => p.BranchId)
+                .OnDelete(DeleteBehavior.Cascade);
 
-            // Payment: One Sale has many Payments
+            // Payment - Sale
             modelBuilder.Entity<Payment>()
                 .HasOne(p => p.Sale)
                 .WithMany(s => s.Payments)
                 .HasForeignKey(p => p.SaleId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            // LoyaltyPoint: One Customer has many LoyaltyPoints
+            // LoyaltyPoint - Customer
             modelBuilder.Entity<LoyaltyPoint>()
                 .HasOne<Customer>()
                 .WithMany()

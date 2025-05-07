@@ -341,30 +341,6 @@ namespace POS_API.Migrations
                     b.ToTable("Products");
                 });
 
-            modelBuilder.Entity("POS_API.Models.Purchase", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("PurchaseDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("SupplierId")
-                        .HasColumnType("int");
-
-                    b.Property<decimal>("TotalAmount")
-                        .HasColumnType("decimal(18,2)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("SupplierId");
-
-                    b.ToTable("Purchases");
-                });
-
             modelBuilder.Entity("POS_API.Models.PurchaseItem", b =>
                 {
                     b.Property<int>("Id")
@@ -379,10 +355,10 @@ namespace POS_API.Migrations
                     b.Property<int?>("ProductId1")
                         .HasColumnType("int");
 
-                    b.Property<int>("PurchaseId")
+                    b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<int>("Quantity")
+                    b.Property<int>("StockId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Subtotal")
@@ -397,7 +373,7 @@ namespace POS_API.Migrations
 
                     b.HasIndex("ProductId1");
 
-                    b.HasIndex("PurchaseId");
+                    b.HasIndex("StockId");
 
                     b.ToTable("PurchaseItems");
                 });
@@ -470,6 +446,43 @@ namespace POS_API.Migrations
                     b.HasIndex("SaleId");
 
                     b.ToTable("SaleItems");
+                });
+
+            modelBuilder.Entity("POS_API.Models.Stock", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("BranchesId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ProductId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("PurchaseDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<int>("SupplierId")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("TotalAmount")
+                        .HasColumnType("decimal(18,2)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("BranchesId");
+
+                    b.HasIndex("ProductId");
+
+                    b.HasIndex("SupplierId");
+
+                    b.ToTable("Stocks");
                 });
 
             modelBuilder.Entity("POS_API.Models.Supplier", b =>
@@ -688,17 +701,6 @@ namespace POS_API.Migrations
                     b.Navigation("Supplier");
                 });
 
-            modelBuilder.Entity("POS_API.Models.Purchase", b =>
-                {
-                    b.HasOne("POS_API.Models.Supplier", "Supplier")
-                        .WithMany("Purchases")
-                        .HasForeignKey("SupplierId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
-
-                    b.Navigation("Supplier");
-                });
-
             modelBuilder.Entity("POS_API.Models.PurchaseItem", b =>
                 {
                     b.HasOne("POS_API.Models.Product", "Product")
@@ -711,15 +713,15 @@ namespace POS_API.Migrations
                         .WithMany("PurchaseItems")
                         .HasForeignKey("ProductId1");
 
-                    b.HasOne("POS_API.Models.Purchase", "Purchase")
+                    b.HasOne("POS_API.Models.Stock", "Stock")
                         .WithMany("PurchaseItems")
-                        .HasForeignKey("PurchaseId")
+                        .HasForeignKey("StockId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("Product");
 
-                    b.Navigation("Purchase");
+                    b.Navigation("Stock");
                 });
 
             modelBuilder.Entity("POS_API.Models.Sale", b =>
@@ -763,6 +765,33 @@ namespace POS_API.Migrations
                     b.Navigation("Sale");
                 });
 
+            modelBuilder.Entity("POS_API.Models.Stock", b =>
+                {
+                    b.HasOne("POS_API.Models.Branches", "Branches")
+                        .WithMany()
+                        .HasForeignKey("BranchesId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("POS_API.Models.Product", "Product")
+                        .WithMany()
+                        .HasForeignKey("ProductId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("POS_API.Models.Supplier", "Supplier")
+                        .WithMany("Stocks")
+                        .HasForeignKey("SupplierId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Branches");
+
+                    b.Navigation("Product");
+
+                    b.Navigation("Supplier");
+                });
+
             modelBuilder.Entity("POS_API.Models.Branches", b =>
                 {
                     b.Navigation("Products");
@@ -785,11 +814,6 @@ namespace POS_API.Migrations
                     b.Navigation("SaleItems");
                 });
 
-            modelBuilder.Entity("POS_API.Models.Purchase", b =>
-                {
-                    b.Navigation("PurchaseItems");
-                });
-
             modelBuilder.Entity("POS_API.Models.Sale", b =>
                 {
                     b.Navigation("Payments");
@@ -797,9 +821,14 @@ namespace POS_API.Migrations
                     b.Navigation("SaleItems");
                 });
 
+            modelBuilder.Entity("POS_API.Models.Stock", b =>
+                {
+                    b.Navigation("PurchaseItems");
+                });
+
             modelBuilder.Entity("POS_API.Models.Supplier", b =>
                 {
-                    b.Navigation("Purchases");
+                    b.Navigation("Stocks");
                 });
 
             modelBuilder.Entity("POS_API.Models.User", b =>

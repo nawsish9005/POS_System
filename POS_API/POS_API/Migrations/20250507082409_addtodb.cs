@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace POS_API.Migrations
 {
     /// <inheritdoc />
-    public partial class addalltodb : Migration
+    public partial class addtodb : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -30,8 +30,6 @@ namespace POS_API.Migrations
                 columns: table => new
                 {
                     Id = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Discriminator = table.Column<string>(type: "nvarchar(13)", maxLength: 13, nullable: false),
-                    FullName = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     UserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     NormalizedUserName = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
                     Email = table.Column<string>(type: "nvarchar(256)", maxLength: 256, nullable: true),
@@ -96,6 +94,21 @@ namespace POS_API.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Discounts",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Percentage = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    IsActive = table.Column<bool>(type: "bit", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Discounts", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Suppliers",
                 columns: table => new
                 {
@@ -110,6 +123,20 @@ namespace POS_API.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Suppliers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Taxes",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Rate = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Taxes", x => x.Id);
                 });
 
             migrationBuilder.CreateTable(
@@ -219,6 +246,27 @@ namespace POS_API.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "LoyaltyPoints",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    CustomerId = table.Column<int>(type: "int", nullable: false),
+                    Points = table.Column<int>(type: "int", nullable: false),
+                    EarnedDate = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_LoyaltyPoints", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_LoyaltyPoints_Customers_CustomerId",
+                        column: x => x.CustomerId,
+                        principalTable: "Customers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Sales",
                 columns: table => new
                 {
@@ -261,7 +309,6 @@ namespace POS_API.Migrations
                     StockQuantity = table.Column<int>(type: "int", nullable: false),
                     Price = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     BranchId = table.Column<int>(type: "int", nullable: false),
-                    BranchesId = table.Column<int>(type: "int", nullable: false),
                     CategoryId = table.Column<int>(type: "int", nullable: false),
                     SupplierId = table.Column<int>(type: "int", nullable: false)
                 },
@@ -269,8 +316,8 @@ namespace POS_API.Migrations
                 {
                     table.PrimaryKey("PK_Products", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Products_Branches_BranchesId",
-                        column: x => x.BranchesId,
+                        name: "FK_Products_Branches_BranchId",
+                        column: x => x.BranchId,
                         principalTable: "Branches",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
@@ -289,24 +336,24 @@ namespace POS_API.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Purchases",
+                name: "Payments",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    SupplierId = table.Column<int>(type: "int", nullable: false),
-                    PurchaseDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                    SaleId = table.Column<int>(type: "int", nullable: false),
+                    Amount = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    PaymentMethod = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Purchases", x => x.Id);
+                    table.PrimaryKey("PK_Payments", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_Purchases_Suppliers_SupplierId",
-                        column: x => x.SupplierId,
-                        principalTable: "Suppliers",
+                        name: "FK_Payments_Sales_SaleId",
+                        column: x => x.SaleId,
+                        principalTable: "Sales",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -344,15 +391,52 @@ namespace POS_API.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "Stocks",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    SupplierId = table.Column<int>(type: "int", nullable: false),
+                    ProductId = table.Column<int>(type: "int", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    BranchesId = table.Column<int>(type: "int", nullable: false),
+                    PurchaseDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    TotalAmount = table.Column<decimal>(type: "decimal(18,2)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Stocks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Stocks_Branches_BranchesId",
+                        column: x => x.BranchesId,
+                        principalTable: "Branches",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Stocks_Products_ProductId",
+                        column: x => x.ProductId,
+                        principalTable: "Products",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Stocks_Suppliers_SupplierId",
+                        column: x => x.SupplierId,
+                        principalTable: "Suppliers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "PurchaseItems",
                 columns: table => new
                 {
                     Id = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    PurchaseId = table.Column<int>(type: "int", nullable: false),
+                    StockId = table.Column<int>(type: "int", nullable: false),
                     ProductId = table.Column<int>(type: "int", nullable: false),
                     Quantity = table.Column<int>(type: "int", nullable: false),
                     UnitCost = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
+                    Subtotal = table.Column<decimal>(type: "decimal(18,2)", nullable: false),
                     ProductId1 = table.Column<int>(type: "int", nullable: true)
                 },
                 constraints: table =>
@@ -370,9 +454,9 @@ namespace POS_API.Migrations
                         principalTable: "Products",
                         principalColumn: "Id");
                     table.ForeignKey(
-                        name: "FK_PurchaseItems_Purchases_PurchaseId",
-                        column: x => x.PurchaseId,
-                        principalTable: "Purchases",
+                        name: "FK_PurchaseItems_Stocks_StockId",
+                        column: x => x.StockId,
+                        principalTable: "Stocks",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                 });
@@ -417,9 +501,19 @@ namespace POS_API.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Products_BranchesId",
+                name: "IX_LoyaltyPoints_CustomerId",
+                table: "LoyaltyPoints",
+                column: "CustomerId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Payments_SaleId",
+                table: "Payments",
+                column: "SaleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Products_BranchId",
                 table: "Products",
-                column: "BranchesId");
+                column: "BranchId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Products_CategoryId",
@@ -442,14 +536,9 @@ namespace POS_API.Migrations
                 column: "ProductId1");
 
             migrationBuilder.CreateIndex(
-                name: "IX_PurchaseItems_PurchaseId",
+                name: "IX_PurchaseItems_StockId",
                 table: "PurchaseItems",
-                column: "PurchaseId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Purchases_SupplierId",
-                table: "Purchases",
-                column: "SupplierId");
+                column: "StockId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_SaleItems_ProductId",
@@ -475,6 +564,21 @@ namespace POS_API.Migrations
                 name: "IX_Sales_UserId",
                 table: "Sales",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Stocks_BranchesId",
+                table: "Stocks",
+                column: "BranchesId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Stocks_ProductId",
+                table: "Stocks",
+                column: "ProductId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Stocks_SupplierId",
+                table: "Stocks",
+                column: "SupplierId");
         }
 
         /// <inheritdoc />
@@ -496,22 +600,40 @@ namespace POS_API.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Discounts");
+
+            migrationBuilder.DropTable(
+                name: "LoyaltyPoints");
+
+            migrationBuilder.DropTable(
+                name: "Payments");
+
+            migrationBuilder.DropTable(
                 name: "PurchaseItems");
 
             migrationBuilder.DropTable(
                 name: "SaleItems");
 
             migrationBuilder.DropTable(
+                name: "Taxes");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
-                name: "Purchases");
+                name: "Stocks");
+
+            migrationBuilder.DropTable(
+                name: "Sales");
 
             migrationBuilder.DropTable(
                 name: "Products");
 
             migrationBuilder.DropTable(
-                name: "Sales");
+                name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Customers");
 
             migrationBuilder.DropTable(
                 name: "Branches");
@@ -521,12 +643,6 @@ namespace POS_API.Migrations
 
             migrationBuilder.DropTable(
                 name: "Suppliers");
-
-            migrationBuilder.DropTable(
-                name: "AspNetUsers");
-
-            migrationBuilder.DropTable(
-                name: "Customers");
         }
     }
 }

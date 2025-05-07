@@ -19,15 +19,15 @@ namespace POS_API.Controllers
 
         // GET: api/Purchase
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<PurchaseDto>>> GetPurchases()
+        public async Task<ActionResult<IEnumerable<StockDto>>> GetPurchases()
         {
-            var purchases = await _context.Purchases
+            var purchases = await _context.Stocks
                 .Include(p => p.Supplier)
                 .Include(p => p.PurchaseItems)
                 .ThenInclude(pi => pi.Product)
                 .ToListAsync();
 
-            var purchaseDtos = purchases.Select(p => new PurchaseDto
+            var purchaseDtos = purchases.Select(p => new StockDto
             {
                 Id = p.Id,
                 SupplierId = p.SupplierId,
@@ -36,7 +36,7 @@ namespace POS_API.Controllers
                 PurchaseItems = p.PurchaseItems.Select(pi => new PurchaseItemDto
                 {
                     Id = pi.Id,
-                    PurchaseId = pi.PurchaseId,
+                    StockId = pi.StockId,
                     ProductId = pi.ProductId,
                     Quantity = pi.Quantity,
                     UnitCost = pi.UnitCost,
@@ -49,9 +49,9 @@ namespace POS_API.Controllers
 
         // GET: api/Purchase/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<PurchaseDto>> GetPurchaseById(int id)
+        public async Task<ActionResult<StockDto>> GetPurchaseById(int id)
         {
-            var purchase = await _context.Purchases
+            var purchase = await _context.Stocks
                 .Include(p => p.Supplier)
                 .Include(p => p.PurchaseItems)
                 .ThenInclude(pi => pi.Product)
@@ -62,7 +62,7 @@ namespace POS_API.Controllers
                 return NotFound();
             }
 
-            var purchaseDto = new PurchaseDto
+            var purchaseDto = new StockDto
             {
                 Id = purchase.Id,
                 SupplierId = purchase.SupplierId,
@@ -71,7 +71,7 @@ namespace POS_API.Controllers
                 PurchaseItems = purchase.PurchaseItems.Select(pi => new PurchaseItemDto
                 {
                     Id = pi.Id,
-                    PurchaseId = pi.PurchaseId,
+                    StockId = pi.StockId,
                     ProductId = pi.ProductId,
                     Quantity = pi.Quantity,
                     UnitCost = pi.UnitCost,
@@ -84,10 +84,10 @@ namespace POS_API.Controllers
 
         // POST: api/Purchase
         [HttpPost]
-        public async Task<ActionResult<PurchaseDto>> CreatePurchase(PurchaseDto dto)
+        public async Task<ActionResult<StockDto>> CreatePurchase(StockDto dto)
         {
             // Create the Purchase object
-            var purchase = new Purchase
+            var purchase = new Stock
             {
                 SupplierId = dto.SupplierId,
                 PurchaseDate = dto.PurchaseDate,
@@ -104,7 +104,7 @@ namespace POS_API.Controllers
             // Calculate TotalAmount based on the PurchaseItems
             purchase.TotalAmount = purchase.PurchaseItems.Sum(pi => pi.Subtotal);
 
-            _context.Purchases.Add(purchase);
+            _context.Stocks.Add(purchase);
             await _context.SaveChangesAsync();
 
             // Map the created purchase back to DTO
@@ -114,9 +114,9 @@ namespace POS_API.Controllers
 
         // PUT: api/Purchase/5
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdatePurchase(int id, PurchaseDto dto)
+        public async Task<IActionResult> UpdatePurchase(int id, StockDto dto)
         {
-            var purchase = await _context.Purchases
+            var purchase = await _context.Stocks
                 .Include(p => p.PurchaseItems)
                 .FirstOrDefaultAsync(p => p.Id == id);
 
@@ -148,7 +148,7 @@ namespace POS_API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeletePurchase(int id)
         {
-            var purchase = await _context.Purchases
+            var purchase = await _context.Stocks
                 .Include(p => p.PurchaseItems)
                 .FirstOrDefaultAsync(p => p.Id == id);
 
@@ -157,7 +157,7 @@ namespace POS_API.Controllers
                 return NotFound();
             }
 
-            _context.Purchases.Remove(purchase);
+            _context.Stocks.Remove(purchase);
             await _context.SaveChangesAsync();
 
             return NoContent();
