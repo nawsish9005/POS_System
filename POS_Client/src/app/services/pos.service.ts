@@ -123,8 +123,6 @@ export class PosService {
     return this.http.delete(this.baseUrl + this.supplierUrl + "/" + id);
   }
 
-  
-
 
   public discountUrl = "/Discount";
 
@@ -216,8 +214,6 @@ export class PosService {
     return this.http.delete(this.baseUrl + this.purchaseItemUrl + "/" + id);
   }
 
-
-
 // pos.service.ts
 private updateProfileUrl = '/account/updateprofile';
 private getProfileUrl = '/account/getprofile';
@@ -229,6 +225,11 @@ public updateProfile(data: any): Observable<any> {
 public GetProfile(): Observable<any> {
   return this.http.get(`${this.baseUrl}${this.getProfileUrl}`);
 }
+
+public getAllUsers(): Observable<any[]> {
+  return this.http.get<any[]>(this.roleBaseUrl + '/get-users');
+}
+
 
 
 private roleBaseUrl = this.baseUrl + '/account';
@@ -242,8 +243,6 @@ updateRole(id: string, newRoleName: any): Observable<any> {
   return this.http.put(`${this.roleBaseUrl}/roleUpdate?id=${id}`, newRoleName);
 }
 
-
-// ✅ GET: Get all roles (returning full objects with id + name)
 public getAllRoles() {
   return this.http.get<string[]>(this.roleBaseUrl + '/get-roles');
 }
@@ -256,6 +255,26 @@ public deleteRole(id: string) {
 // Assign role to user — unchanged
 public assignRole(data: { userName: string; role: string }) {
   return this.http.post(this.roleBaseUrl + '/assign-role', data);
+}
+
+// ✅ GET: Get all assigned roles for all users
+public getAllAssignedRoles(): Observable<any[]> {
+  return this.http.get<any[]>(`${this.roleBaseUrl}/get-all-assign-role`);
+}
+
+// ✅ GET: Get assigned roles by username
+public getAssignedRoleById(userName: string): Observable<any> {
+  return this.http.get(`${this.roleBaseUrl}/get-assign-role-by-id?username=${userName}`);
+}
+
+// ✅ PUT: Update user's assigned roles
+public updateAssignedRole(data: { userName: string; roles: string[] }): Observable<any> {
+  return this.http.put(`${this.roleBaseUrl}/update-assign-role`, data);
+}
+
+// ✅ DELETE: Remove role from user
+public deleteAssignedRole(data: { userName: string; role: string }): Observable<any> {
+  return this.http.request('delete', `${this.roleBaseUrl}/delete-assign-role`, { body: data });
 }
 
 // Get role by ID — optional

@@ -23,6 +23,7 @@ import { PurchaseItemComponent } from './purchase-item/purchase-item.component';
 import { UpdateProfileComponent } from './update-profile/update-profile.component';
 import { RoleComponent } from './role/role.component';
 import { StockComponent } from './stock/stock.component';
+import { AssignRoleComponent } from './assign-role/assign-role.component';
 
 @NgModule({
   declarations: [
@@ -44,6 +45,7 @@ import { StockComponent } from './stock/stock.component';
     UpdateProfileComponent,
     RoleComponent,
     StockComponent,
+    AssignRoleComponent,
   ],
   imports: [
     HttpClientModule,

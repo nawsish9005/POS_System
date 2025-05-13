@@ -15,6 +15,7 @@ import { PurchaseItemComponent } from './purchase-item/purchase-item.component';
 import { UpdateProfileComponent } from './update-profile/update-profile.component';
 import { RoleComponent } from './role/role.component';
 import { StockComponent } from './stock/stock.component';
+import { AssignRoleComponent } from './assign-role/assign-role.component';
 
 const routes: Routes = [
   { path: 'login', title: 'Login', component: LoginComponent },
@@ -32,6 +33,7 @@ const routes: Routes = [
   { path: 'updateProfile', title: 'Update profile', component: UpdateProfileComponent, canActivate: [AuthGuard] },
   { path: 'purchaseItem', title: 'PurchaseItem', component: PurchaseItemComponent, canActivate: [AuthGuard] },
   { path: 'role', title: 'Role', component: RoleComponent, canActivate: [AuthGuard] },
+  { path: 'assignRole', title: 'AssignRole', component: AssignRoleComponent, canActivate: [AuthGuard] },
 
   { path: '', redirectTo: '/login', pathMatch: 'full' },
   { path: '**', redirectTo: '/login' }
