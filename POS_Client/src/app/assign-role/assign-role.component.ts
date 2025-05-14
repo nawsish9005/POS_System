@@ -29,11 +29,25 @@ export class AssignRoleComponent implements OnInit{
   }
 
   getRoles() {
-    this.posService.getAllRoles().subscribe(data => {
-      // Assuming 'data' is an array of strings like ['Admin', 'User', 'Manager']
-      this.allRoles = data.map(role => ({ id: role, name: role })); // Convert to array of { id, name }
+    this.posService.getAllRoles().subscribe(response => {
+  
+      this.allRoles = response.map((r: any) => {
+        // If roles are wrapped in 'id' and 'name', unwrap them:
+        if (r.id && r.name && r.id.id && r.name.name) {
+          return {
+            id: r.id.id,
+            name: r.name.name
+          };
+        }
+        // Fallback if response is normal
+        return {
+          id: r.id,
+          name: r.name
+        };
+      });
     });
   }
+  
 
   getAssignedRoles() {
     this.posService.getAllAssignedRoles().subscribe(data => {
