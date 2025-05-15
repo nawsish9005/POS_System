@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { catchError, Observable, throwError } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 
 @Injectable({
@@ -253,8 +253,18 @@ public deleteRole(id: string) {
 }
 
 // Assign role to user — unchanged
-public assignRole(data: { userName: string; role: string }) {
-  return this.http.post(this.roleBaseUrl + '/assign-role', data);
+assignRole(data: { userName: string; role: string }): Observable<any> {
+  return this.http.post(`${this.roleBaseUrl}/assign-role`, data, {
+    headers: new HttpHeaders({
+      'Content-Type': 'application/json'
+    }),
+    observe: 'response'  // This will give you full response access
+  }).pipe(
+    catchError(error => {
+      console.error('API Error:', error);
+      return throwError(error);
+    })
+  );
 }
 
 // ✅ GET: Get all assigned roles for all users
@@ -268,9 +278,10 @@ public getAssignedRoleById(userName: string): Observable<any> {
 }
 
 // ✅ PUT: Update user's assigned roles
-public updateAssignedRole(data: { userName: string; roles: string[] }): Observable<any> {
-  return this.http.put(`${this.roleBaseUrl}/update-assign-role`, data);
+updateAssignedRole(payload: { userName: string, roles: string[] }): Observable<any> {
+  return this.http.put('your-api-url', payload);
 }
+
 
 // ✅ DELETE: Remove role from user
 public deleteAssignedRole(data: { userName: string; role: string }): Observable<any> {

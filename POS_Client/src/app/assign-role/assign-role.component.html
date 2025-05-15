@@ -25,7 +25,7 @@
             <label class="form-label">Role</label>
             <select class="form-select" formControlName="role">
               <option value="" disabled>Select Role</option>
-              <option *ngFor="let role of allRoles" [value]="role.id">{{ role.name }}</option>
+              <option *ngFor="let role of allRoles" [value]="role.name">{{ role.name }}</option>
             </select>
           </div>
           
@@ -65,6 +65,12 @@
                       (click)="deleteAssignedRole(user.userName, role)">
                 Remove {{ role }}
               </button>
+
+              <button class="btn btn-sm btn-primary"
+                    (click)="updateAssignedRoleWithConfirm(user.userName, user.roles)">
+              Update Roles
+            </button>
+
             </td>
           </tr>
         </tbody>

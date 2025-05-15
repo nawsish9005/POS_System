@@ -24,6 +24,7 @@ import { UpdateProfileComponent } from './update-profile/update-profile.componen
 import { RoleComponent } from './role/role.component';
 import { StockComponent } from './stock/stock.component';
 import { AssignRoleComponent } from './assign-role/assign-role.component';
+import { SweetAlert2Module } from '@sweetalert2/ngx-sweetalert2';
 
 @NgModule({
   declarations: [
@@ -52,6 +53,7 @@ import { AssignRoleComponent } from './assign-role/assign-role.component';
     BrowserModule,
     AppRoutingModule,
     ReactiveFormsModule,
+    SweetAlert2Module.forRoot()
   ],
   providers: [
     {

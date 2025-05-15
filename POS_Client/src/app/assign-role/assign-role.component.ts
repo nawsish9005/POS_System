@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { PosService } from '../services/pos.service';
 import { HttpHeaders } from '@angular/common/http';
+import Swal from 'sweetalert2';
 
 @Component({
   selector: 'app-assign-role',
@@ -55,46 +56,88 @@ export class AssignRoleComponent implements OnInit {
   }
 
   assignRole() {
-    if (this.assignRoleForm.invalid) return;
-
+    if (this.assignRoleForm.invalid) {
+      this.assignRoleForm.markAllAsTouched();
+      return;
+    }
+  
+    this.isSubmitting = true;
+    this.message = '';
+    this.error = '';
+  
     const payload = {
       userName: this.assignRoleForm.value.userName,
       role: this.assignRoleForm.value.role
     };
-
-    console.log('Assign Role Payload:', payload);
-    this.isSubmitting = true;
-
-    const headers = new HttpHeaders({
-      'Content-Type': 'application/json'
-    });
-
+  
     this.posService.assignRole(payload).subscribe({
       next: () => {
-        this.message = 'Role assigned successfully';
-        this.error = '';
+        Swal.fire({
+          title: 'Success!',
+          text: 'Role assigned successfully.',
+          icon: 'success',
+          confirmButtonText: 'OK'
+        });
         this.assignRoleForm.reset();
         this.getAssignedRoles();
-        this.isSubmitting = false;
       },
       error: (err) => {
-        console.error('Assign Role Error:', err);
-        this.error = 'Failed to assign role';
-        this.message = '';
+        Swal.fire({
+          title: 'Error!',
+          text: err.error?.message || 'Failed to assign role',
+          icon: 'error',
+          confirmButtonText: 'OK'
+        });
+      },
+      complete: () => {
         this.isSubmitting = false;
       }
     });
   }
 
-  updateAssignedRole(userName: string, roles: string[]) {
-    this.posService.updateAssignedRole({ userName, roles }).subscribe(() => {
-      this.getAssignedRoles();
+  updateAssignedRoleWithConfirm(userName: string, roles: string[]) {
+    console.log('Roles passed:', roles);  // Check what is passed
+  
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `Do you want to update roles for user "${userName}"?`,
+      icon: 'question',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, update!',
+      cancelButtonText: 'Cancel',
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.posService.updateAssignedRole({ userName, roles }).subscribe(() => {
+          Swal.fire('Updated!', `Roles for "${userName}" have been updated.`, 'success');
+          this.getAssignedRoles();
+        }, (error) => {
+          Swal.fire('Error!', 'Failed to update roles.', 'error');
+        });
+      }
     });
   }
+  
+  
 
   deleteAssignedRole(userName: string, role: string) {
-    this.posService.deleteAssignedRole({ userName, role }).subscribe(() => {
-      this.getAssignedRoles();
+    Swal.fire({
+      title: 'Are you sure?',
+      text: `Do you want to remove the role "${role}" from user "${userName}"?`,
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Yes, remove it!',
+      cancelButtonText: 'Cancel',
+      reverseButtons: true
+    }).then((result) => {
+      if (result.isConfirmed) {
+        this.posService.deleteAssignedRole({ userName, role }).subscribe(() => {
+          Swal.fire('Removed!', `Role "${role}" has been removed.`, 'success');
+          this.getAssignedRoles();
+        }, (error) => {
+          Swal.fire('Error!', 'Failed to remove role.', 'error');
+        });
+      }
     });
   }
 }
