@@ -98,6 +98,15 @@ namespace POS_API.Controllers
             return Unauthorized();
         }
 
+        // GET: api/account/get-users
+        [HttpGet("get-users")]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            var users = _userManager.Users.Select(u => new { u.UserName }).ToList();
+            return Ok(users);
+        }
+
+
 
         // POST: api/account/add-role
         [HttpPost("add-role")]
@@ -200,6 +209,94 @@ namespace POS_API.Controllers
             }
             return BadRequest(result.Errors);
         }
+
+        // PUT: api/account/update-assign-role
+        [HttpPut("update-assign-role")]
+        public async Task<IActionResult> UpdateAssignRole([FromBody] UserRole model)
+        {
+            var user = await _userManager.FindByNameAsync(model.UserName);
+            if (user == null)
+            {
+                return BadRequest("User not found");
+            }
+
+            var currentRoles = await _userManager.GetRolesAsync(user);
+            var removeResult = await _userManager.RemoveFromRolesAsync(user, currentRoles);
+            if (!removeResult.Succeeded)
+            {
+                return BadRequest("Failed to remove existing roles");
+            }
+
+            var addResult = await _userManager.AddToRoleAsync(user, model.Role);
+            if (addResult.Succeeded)
+            {
+                return Ok(new { Message = "User role updated successfully" });
+            }
+
+            return BadRequest(addResult.Errors);
+        }
+
+        // DELETE: api/account/delete-assign-role
+        [HttpDelete("delete-assign-role")]
+        public async Task<IActionResult> DeleteAssignRole([FromBody] UserRole model)
+        {
+            var user = await _userManager.FindByNameAsync(model.UserName);
+            if (user == null)
+            {
+                return BadRequest("User not found");
+            }
+
+            var result = await _userManager.RemoveFromRoleAsync(user, model.Role);
+            if (result.Succeeded)
+            {
+                return Ok(new { Message = "Role removed from user successfully" });
+            }
+
+            return BadRequest(result.Errors);
+        }
+
+        // GET: api/account/get-assign-role?username=johndoe
+        [HttpGet("get-assign-role")]
+        public async Task<IActionResult> GetByIdAssignRole([FromQuery] string username)
+        {
+            var user = await _userManager.FindByNameAsync(username);
+            if (user == null)
+            {
+                return NotFound("User not found");
+            }
+
+            var roles = await _userManager.GetRolesAsync(user);
+            return Ok(new
+            {
+                UserName = username,
+                Roles = roles
+            });
+        }
+
+        // GET: api/account/get-all-assign-role
+        [HttpGet("get-all-assign-role")]
+        public async Task<IActionResult> GetAllAssignRole()
+        {
+            var users = _userManager.Users.ToList();
+
+            var userRolesList = new List<object>();
+
+            foreach (var user in users)
+            {
+                var roles = await _userManager.GetRolesAsync(user);
+
+                userRolesList.Add(new
+                {
+                    UserId = user.Id,
+                    UserName = user.UserName,
+                    Email = user.Email,
+                    Roles = roles
+                });
+            }
+
+            return Ok(userRolesList);
+        }
+
 
         [HttpGet("getprofile")]
         [Authorize]
